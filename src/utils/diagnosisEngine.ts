@@ -529,12 +529,12 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     // Red Flags
     if (a9 !== -1 && a9 !== 4) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Serious symptoms detected." };
     if (a7 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Symptoms lasting 7+ days." };
-    if (a8 === 1 && (a7 === 2 || a7 === 3)) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "No relief after medicine for 5+ days." };
+    if (a8 === 1 && a7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "No relief after medicine for 5+ days." };
 
     // Diagnosis
     if (a6 === 0 && (a7 >= 0 && a7 <= 1)) return { diagnosis: 'SEASONAL FLU', action: "dispense", compartment: 1, confidence: 95 };
-    if (a8 === 0 && (a2 !== -1 || a3 !== 2 || a4.length > 0)) return { diagnosis: 'COMMON FLU', action: "dispense", compartment: 1, confidence: 90 };
-    if (a2 !== 3 && a5 !== 2 && a4.length === 0) return { diagnosis: 'VIRAL FEVER', action: "dispense", compartment: 1, confidence: 90 };
+    if (a8 === 0 && (a2 !== 3 || a3 !== 2 || (a4.length > 0 && !a4.includes(5)))) return { diagnosis: 'COMMON FLU', action: "dispense", compartment: 1, confidence: 90 };
+    if (a2 !== 3 && a5 !== 2 && (a4.length === 0 || a4.includes(5))) return { diagnosis: 'VIRAL FEVER', action: "dispense", compartment: 1, confidence: 90 };
     
     return { diagnosis: 'COMMON FLU', action: "dispense", compartment: 1, confidence: 70 };
   }
@@ -551,9 +551,9 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     const b9 = getAns('Q_B9');
 
     // Red Flags
+    if (b2 === 2 && b7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "New back-of-head pain (could be BP related)." };
     if (b9 !== -1 && b9 !== 3) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true };
     if (b3 === 2 && b4 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Severe headache for 3+ days." };
-    if (b2 === 2 && b7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "New back-of-head pain (could be BP related)." };
 
     // Diagnosis
     if (b6 === 0) return { diagnosis: 'FLU-RELATED HEADACHE', action: "dispense", compartment: 1, confidence: 90 };
@@ -583,8 +583,8 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     if (c9 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Symptoms >3 days." };
 
     // Diagnosis
-    if (c2 === 3) return { diagnosis: 'ACIDITY / GASTRITIS', action: "none", confidence: 95, note: "Prescription only." };
-    if (c2 === 5) return { diagnosis: 'GAS / INDIGESTION', action: "none", confidence: 90, note: "Prescription only." };
+    if (c2 === 3) return { diagnosis: 'ACIDITY / GASTRITIS', action: "dispense", confidence: 95, note: "Prescription only." };
+    if (c2 === 5) return { diagnosis: 'GAS / INDIGESTION', action: "dispense", confidence: 90, note: "Prescription only." };
     if (c2 === 4) return { diagnosis: 'FOOD-RELATED CRAMPS', action: "dispense", compartment: 3, confidence: 90 };
     if (c2 === 0) return { diagnosis: 'FOOD POISONING / GASTROENTERITIS', action: "dispense", compartment: 3, confidence: 90 };
     if (c2 === 1) return { diagnosis: 'FOOD POISONING', action: "dispense", compartment: 3, confidence: 90 };
@@ -606,7 +606,7 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
 
     // Red Flags
     if (d9 === 0) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Baby <6mo or deep wounds." };
-    if (d2 === 0 && d6 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true, note: "Rash + High Fever." };
+    if ((d2 === 3 || d7 === 0) && d6 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true, note: "Rash + High Fever." };
     if (d7 === 0 && d2 === 3 && d6 !== 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Fast spreading infection." };
 
     // Diagnosis
@@ -617,7 +617,7 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     if (d2 === 4) return { diagnosis: 'TINEA VERSICOLOR (FUNGAL)', action: "dispense", compartment: 4, confidence: 90 };
     if (d8 === 0) return { diagnosis: 'ALLERGIC RASH / URTICARIA', action: "dispense", compartment: 2, confidence: 90 };
     if (d2 === 0 && d8 === 1) return { diagnosis: 'CONTACT DERMATITIS / ALLERGY', action: "dispense", compartment: 2, confidence: 85 };
-    if (d2 === 3 && d6 === 2) return { diagnosis: 'MINOR BACTERIAL SKIN INFECTION', action: "dispense", compartment: 2, confidence: 80 };
+    if (d2 === 3 && (d6 === 1 || d6 === 2)) return { diagnosis: 'MINOR BACTERIAL SKIN INFECTION', action: "dispense", compartment: 2, confidence: 80 };
 
     return { diagnosis: 'ALLERGIC RASH / URTICARIA', action: "dispense", compartment: 2, confidence: 70 };
   }
