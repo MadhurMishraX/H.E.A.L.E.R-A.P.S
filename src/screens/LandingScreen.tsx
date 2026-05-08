@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { 
   ShieldCheck, 
   QrCode, 
   UserPlus, 
-  Settings, 
   X,
   Smartphone,
   ChevronRight,
   Activity,
-  Usb
+  Usb,
+  Upload,
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { motion, AnimatePresence } from 'motion/react';
 import { loginPatient, loginPatientByQR, getPatientFullHistory } from '../services/dbService';
 import { 
-  getHardwareConfig, 
-  initHardware, 
-  closeHardware,
   sendCommand
 } from '../utils/serialComm';
 import { getSetting } from '../services/dbService';
@@ -27,7 +26,6 @@ import jsQR from 'jsqr';
 
 export const LandingScreen = () => {
   const { t, language, setLanguage, setCurrentPatient, hwStatus, hwMode } = useAppContext();
-  const isHardwareConnected = hwStatus === 'connected';
   const navigate = useNavigate();
   const [showScanner, setShowScanner] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -35,7 +33,9 @@ export const LandingScreen = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFirstAid = () => {
     navigate('/dispensing', { state: { isFirstAid: true } });
@@ -44,16 +44,18 @@ export const LandingScreen = () => {
   useEffect(() => {
     let scanner: Html5QrcodeScanner | null = null;
     if (showScanner) {
-      scanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { fps: 10, qrbox: { width: 400, height: 400 } },
-        /* verbose= */ false
-      );
-      scanner.render((decodedText) => {
-        handleScan(decodedText);
-        scanner?.clear();
-        setShowScanner(false);
-      }, (error) => {});
+      setTimeout(() => {
+        scanner = new Html5QrcodeScanner(
+          "qr-reader",
+          { fps: 15, qrbox: { width: 300, height: 300 } },
+          /* verbose= */ false
+        );
+        scanner.render((decodedText) => {
+          handleScan(decodedText);
+          scanner?.clear();
+          setShowScanner(false);
+        }, (error) => {});
+      }, 100);
     }
     return () => {
       if (scanner) scanner.clear().catch(err => console.error("Failed to clear scanner", err));
@@ -76,10 +78,7 @@ export const LandingScreen = () => {
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processImage = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
@@ -97,14 +96,29 @@ export const LandingScreen = () => {
         
         if (code) {
           handleScan(code.data);
+          setShowScanner(false);
         } else {
-          setErrorMessage("No QR code found in the image.");
+          setErrorMessage("No QR code detected in this image.");
           setTimeout(() => setErrorMessage(''), 5000);
         }
       };
       img.src = event.target?.result as string;
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) processImage(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processImage(file);
+    }
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -128,7 +142,6 @@ export const LandingScreen = () => {
   };
 
   const handleAdminAccess = async () => {
-    // Check if RFID is enabled
     const rfidSetting = await getSetting('rfid_enabled');
     if (rfidSetting !== 'false') {
       sendCommand('REBOOT');
@@ -138,14 +151,10 @@ export const LandingScreen = () => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
       className="w-full h-full flex overflow-y-auto relative font-sans text-text-primary scrollbar-thin scrollbar-thumb-brand-primary"
     >
-      {/* Pro Hardware Connection Modal */}
       <HardwareModal isOpen={showStatusModal} onClose={() => setShowStatusModal(false)} />
-      {/* Background Gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--color-brand-card)_0%,_transparent_50%)] pointer-events-none opacity-50" />
       
       {/* Top Right Hardware Status */}
@@ -177,7 +186,6 @@ export const LandingScreen = () => {
       {/* LEFT HALF */}
       <div className="w-1/2 h-full flex flex-col items-center justify-center border-r border-[rgba(33,150,243,0.1)] relative z-10">
         <div className="relative mb-12">
-          {/* Cyan Glow Halo */}
           <div className="absolute inset-0 bg-brand-secondary blur-[80px] opacity-15 rounded-full scale-150" />
           <motion.div 
             animate={{ y: [0, -10, 0] }}
@@ -202,41 +210,31 @@ export const LandingScreen = () => {
         
         {/* Language Toggle */}
         <div className="flex bg-[rgba(15,32,64,0.5)] p-1.5 rounded-full mb-16 border border-[rgba(33,150,243,0.2)]">
-          <button
-            onClick={() => setLanguage('en')}
-            className={`px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
-              language === 'en' 
-                ? 'bg-brand-primary text-text-primary shadow-[0_4px_12px_rgba(33,150,243,0.4)]' 
-                : 'text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            {t('landing.en')}
-          </button>
-          <button
-            onClick={() => setLanguage('hi')}
-            className={`px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
-              language === 'hi' 
-                ? 'bg-brand-primary text-text-primary shadow-[0_4px_12px_rgba(33,150,243,0.4)]' 
-                : 'text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            {t('landing.hi')}
-          </button>
+          {['en', 'hi'].map(l => (
+            <button
+              key={l}
+              onClick={() => setLanguage(l as any)}
+              className={`px-8 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
+                language === l 
+                  ? 'bg-brand-primary text-text-primary shadow-[0_4px_12px_rgba(33,150,243,0.4)]' 
+                  : 'text-text-muted hover:text-text-secondary'
+              }`}
+            >
+              {t(`landing.${l}`)}
+            </button>
+          ))}
         </div>
 
         {/* Main Menu */}
         <div className="w-full max-w-md flex flex-col gap-6">
-          
           {errorMessage && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-[rgba(255,82,82,0.1)] border border-brand-danger text-brand-danger p-4 rounded-xl text-sm font-bold text-center glow">
               {errorMessage}
             </motion.div>
           )}
 
-          {/* Button 1: Get Started */}
           <motion.button
-            whileTap={{ scale: 0.96 }}
-            onClick={() => navigate('/registration')}
+            whileTap={{ scale: 0.96 }} onClick={() => navigate('/registration')}
             className="w-full glass-card border-l-4 border-l-brand-secondary p-6 flex items-center justify-between group hover:bg-[rgba(33,150,243,0.05)] transition-colors"
           >
             <div className="flex items-center gap-6">
@@ -248,10 +246,8 @@ export const LandingScreen = () => {
             <ChevronRight className="text-text-muted group-hover:text-brand-secondary transition-colors" />
           </motion.button>
 
-          {/* Button 2: Returning Patient */}
           <motion.button
-            whileTap={{ scale: 0.96 }}
-            onClick={() => setShowLoginModal(true)}
+            whileTap={{ scale: 0.96 }} onClick={() => setShowScanner(true)}
             className="w-full glass-card border-l-4 border-l-brand-primary p-6 flex items-center justify-between group hover:bg-[rgba(33,150,243,0.05)] transition-colors"
           >
             <div className="flex items-center gap-6">
@@ -263,10 +259,8 @@ export const LandingScreen = () => {
             <ChevronRight className="text-text-muted group-hover:text-brand-primary transition-colors" />
           </motion.button>
 
-          {/* Button 3: First Aid */}
           <motion.button
-            whileTap={{ scale: 0.96 }}
-            onClick={handleFirstAid}
+            whileTap={{ scale: 0.96 }} onClick={handleFirstAid}
             className="w-full glass-card border-l-4 border-l-brand-danger p-6 flex items-center justify-between group hover:bg-[rgba(255,82,82,0.05)] transition-colors"
           >
             <div className="flex items-center gap-6">
@@ -278,10 +272,8 @@ export const LandingScreen = () => {
             <ChevronRight className="text-text-muted group-hover:text-brand-danger transition-colors" />
           </motion.button>
 
-          {/* Button 4: Admin Access */}
           <motion.button
-            whileTap={{ scale: 0.96 }}
-            onClick={handleAdminAccess}
+            whileTap={{ scale: 0.96 }} onClick={handleAdminAccess}
             className="w-full glass-card border-l-4 border-l-text-muted p-6 flex items-center justify-between group hover:bg-[rgba(255,255,255,0.05)] transition-colors mt-4 opacity-70 hover:opacity-100"
           >
             <div className="flex items-center gap-6">
@@ -295,19 +287,155 @@ export const LandingScreen = () => {
         </div>
       </div>
 
-      {/* LOGIN MODAL */}
+      {/* UNIFIED QR SCANNER HUB */}
+      <AnimatePresence>
+        {showScanner && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-brand-navy/95 backdrop-blur-xl z-[100] flex items-center justify-center p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-4xl glass-card relative overflow-hidden flex flex-col md:flex-row"
+            >
+              {/* Left Side: Scanner Area */}
+              <div 
+                className={`flex-1 p-8 relative transition-all duration-300 ${isDragging ? 'bg-brand-primary/10' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 rounded-xl bg-brand-primary/10 text-brand-primary">
+                    <Camera size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">QR Scanner Hub</h2>
+                    <p className="text-xs text-text-muted uppercase tracking-widest font-bold">Live Scan or Drop File</p>
+                  </div>
+                </div>
+
+                <div className="relative group">
+                  <div 
+                    id="qr-reader" 
+                    className="w-full aspect-square md:aspect-video rounded-3xl overflow-hidden border-2 border-white/5 bg-brand-card shadow-inner"
+                  >
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-text-muted pointer-events-none opacity-40">
+                      <QrCode size={64} strokeWidth={1} />
+                      <p className="mt-4 font-medium">Initializing Secure Camera...</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute top-4 left-4 w-10 h-10 border-t-4 border-l-4 border-brand-primary rounded-tl-2xl pointer-events-none" />
+                  <div className="absolute top-4 right-4 w-10 h-10 border-t-4 border-r-4 border-brand-primary rounded-tr-2xl pointer-events-none" />
+                  <div className="absolute bottom-4 left-4 w-10 h-10 border-b-4 border-l-4 border-brand-primary rounded-bl-2xl pointer-events-none" />
+                  <div className="absolute bottom-4 right-4 w-10 h-10 border-b-4 border-r-4 border-brand-primary rounded-br-2xl pointer-events-none" />
+
+                  <motion.div 
+                    animate={{ top: ['10%', '90%', '10%'] }} transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                    className="absolute left-4 right-4 h-0.5 bg-brand-secondary shadow-[0_0_15px_var(--color-brand-secondary)] z-10 pointer-events-none opacity-50"
+                  />
+
+                  <AnimatePresence>
+                    {isDragging && (
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-brand-primary/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-white border-4 border-dashed border-white/30 rounded-3xl"
+                      >
+                        <Upload size={64} className="mb-4 animate-bounce" />
+                        <h3 className="text-2xl font-black">Drop to Scan</h3>
+                        <p className="font-bold opacity-80 uppercase tracking-widest text-sm mt-2">Instant Login Retrieval</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="mt-6 flex items-center justify-between text-text-muted text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <Smartphone size={16} />
+                    <span>Point camera at your HEALER Card</span>
+                  </div>
+                  <div className="h-px flex-1 mx-6 bg-white/5" />
+                  <span>OR</span>
+                  <div className="h-px flex-1 mx-6 bg-white/5" />
+                  <div className="flex items-center gap-2">
+                    <ImageIcon size={16} />
+                    <span>Drag & Drop image anywhere</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side: Alternative Options */}
+              <div className="w-full md:w-80 bg-white/5 border-l border-white/5 p-8 flex flex-col gap-6">
+                <button 
+                  onClick={() => setShowScanner(false)}
+                  className="absolute top-6 right-6 w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-brand-danger/20 hover:text-brand-danger transition-all z-30"
+                >
+                  <X size={20} />
+                </button>
+
+                <div className="flex-1 flex flex-col gap-4">
+                  <h3 className="text-sm font-black text-text-muted uppercase tracking-[0.2em] mb-2">Other Methods</h3>
+                  
+                  <input 
+                    type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleFileUpload}
+                  />
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full p-6 glass-card border border-brand-primary/20 hover:border-brand-primary transition-all flex flex-col items-center gap-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Upload size={24} />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-white">Upload File</p>
+                      <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Browse Storage</p>
+                    </div>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      setShowScanner(false);
+                      setShowLoginModal(true);
+                    }}
+                    className="w-full p-6 glass-card border border-white/5 hover:border-white/20 transition-all flex flex-col items-center gap-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white/5 text-text-muted flex items-center justify-center group-hover:text-white transition-colors">
+                      <MailIcon size={24} />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-bold text-white">Email Login</p>
+                      <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Use Credentials</p>
+                    </div>
+                  </motion.button>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-1 flex items-center gap-2">
+                    <Activity size={12} /> Security Tip
+                  </p>
+                  <p className="text-[11px] text-amber-200/60 leading-relaxed font-medium">
+                    Keep your HEALER QR code private. It contains your secure session identifier.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* EMAIL LOGIN MODAL */}
       <AnimatePresence>
         {showLoginModal && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-brand-navy/95 backdrop-blur-xl z-[100] flex items-center justify-center p-12"
           >
             <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
               className="glass-card w-full max-w-xl p-12 relative"
             >
               <button 
@@ -329,9 +457,7 @@ export const LandingScreen = () => {
                 <div className="flex flex-col gap-3">
                   <label className="text-xs font-bold text-text-secondary uppercase tracking-widest">{t('landing.loginEmail')}</label>
                   <input 
-                    type="email"
-                    required
-                    value={loginForm.email}
+                    type="email" required value={loginForm.email}
                     onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
                     className="h-14 px-6 bg-brand-navy rounded-xl border border-white/10 text-white focus:outline-none focus:border-brand-primary transition-all"
                   />
@@ -339,18 +465,14 @@ export const LandingScreen = () => {
                 <div className="flex flex-col gap-3 text-left">
                   <label className="text-xs font-bold text-text-secondary uppercase tracking-widest">{t('landing.loginPassword')}</label>
                   <input 
-                    type="password"
-                    required
-                    value={loginForm.password}
+                    type="password" required value={loginForm.password}
                     onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
                     className="h-14 px-6 bg-brand-navy rounded-xl border border-white/10 text-white focus:outline-none focus:border-brand-primary transition-all"
                   />
                 </div>
 
                 <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={isLoggingIn}
+                  whileTap={{ scale: 0.98 }} type="submit" disabled={isLoggingIn}
                   className="w-full h-16 bg-brand-primary text-white rounded-xl text-xl font-black shadow-[0_8px_24px_rgba(33,150,243,0.3)] mt-2 flex items-center justify-center gap-3"
                 >
                   {isLoggingIn ? "Logging in..." : t('landing.loginBtn')}
@@ -358,24 +480,8 @@ export const LandingScreen = () => {
                 </motion.button>
               </form>
 
-              <div className="mt-8 pt-8 border-t border-white/10 text-center flex flex-col gap-4">
-                <input 
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
+              <div className="mt-8 pt-8 border-t border-white/10 text-center">
                 <button 
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-brand-primary font-bold flex items-center gap-2 mx-auto hover:underline"
-                >
-                  <Usb size={20} />
-                  Login via QR File
-                </button>
-                <button 
-                  type="button"
                   onClick={() => {
                     setShowLoginModal(false);
                     setShowScanner(true);
@@ -390,48 +496,13 @@ export const LandingScreen = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* QR Scanner Modal */}
-      <AnimatePresence>
-        {showScanner && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-brand-navy/90 backdrop-blur-xl z-[100] flex items-center justify-center p-12"
-          >
-            <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="glass-card w-full max-w-3xl overflow-hidden relative"
-            >
-              <button 
-                onClick={() => setShowScanner(false)}
-                className="absolute top-6 right-6 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-brand-danger/20 hover:text-brand-danger transition-colors z-10"
-              >
-                <X size={24} />
-              </button>
-              
-              <div className="p-12 flex flex-col items-center">
-                <div className="flex items-center gap-4 mb-8">
-                  <Smartphone size={36} className="text-brand-primary" />
-                  <h2 className="text-3xl font-bold">Scan Your Card</h2>
-                </div>
-                
-                <div 
-                  id="qr-reader" 
-                  className="w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border-2 border-brand-primary/30 shadow-[0_0_30px_rgba(33,150,243,0.15)] bg-brand-card"
-                ></div>
-                
-                <p className="mt-8 text-center text-text-secondary">
-                  Hold your QR code card steadily in front of the camera
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 };
+
+const MailIcon = ({ size, className }: { size: number, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
