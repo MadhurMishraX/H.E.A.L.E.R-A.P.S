@@ -176,7 +176,7 @@ export const PrescriptionScreen = () => {
   }
 
   const confidence = currentSession?.confidence_score || 0;
-  const isSerious = diseaseMap?.is_serious === 1 || currentSession?.action_taken === 'auto_referred';
+  const isSerious = diseaseMap?.is_serious === 1 || currentSession?.action_taken === 'auto_referred' || currentSession?.action_taken === 'urgent-refer' || currentSession?.action_taken === 'refer';
 
   let confidenceLabel = "Possible Condition — Please Consult a Doctor";
   let labelColorClass = "from-amber-500 to-amber-600";
@@ -291,12 +291,14 @@ export const PrescriptionScreen = () => {
               <div className="bg-[rgba(255,82,82,0.1)] p-6 rounded-2xl border-2 border-brand-danger flex flex-col gap-3 animate-pulse">
                 <div className="flex items-center gap-4">
                   <AlertCircle className="text-brand-danger shrink-0" size={32} />
-                  <h5 className="text-brand-danger font-black text-xl uppercase tracking-widest m-0">Urgent: Doctor Consultation Required</h5>
+                  <h5 className="text-brand-danger font-black text-xl uppercase tracking-widest m-0">
+                    {currentSession?.action_taken === 'urgent-refer' ? 'Emergency: Immediate Hospital Visit' : 'Urgent: Doctor Consultation Required'}
+                  </h5>
                 </div>
                 <p className="text-brand-danger font-bold text-sm leading-relaxed m-0 pl-12">
-                  {currentSession.action_taken === 'auto_referred' 
-                    ? t('prescription.autoReferralText').replace('{{name}}', settings.doctor_name || 'Doctor') 
-                    : "This condition requires immediate professional medical attention. Please consult a doctor immediately. Auto-referral has been initiated."}
+                  {currentSession.action_taken.includes('refer') 
+                    ? "This condition requires immediate professional medical attention. Please consult a doctor immediately. An alert has been logged."
+                    : t('prescription.autoReferralText').replace('{{name}}', settings.doctor_name || 'Doctor')}
                 </p>
                 <div className="flex items-center gap-2 pl-12 text-brand-danger/70 text-xs font-bold uppercase tracking-widest">
                   <Check size={14} /> Referral Confirmation Sent to {settings.doctor_email || 'Clinic'}
@@ -309,8 +311,8 @@ export const PrescriptionScreen = () => {
                 const invItem = inventory.find(inv => inv.compartment_number === p.compartment_number);
                 const outOfStock = invItem ? invItem.current_count <= 0 : true;
                 const isDispensable = p.compartment_number > 0 && diseaseMap?.is_dispensable === 1;
-                const isSerious = diseaseMap?.is_serious === 1 || currentSession?.action_taken === 'serious_referred';
                 const dispensed = p.is_dispensed === 1 || dispensedItems[p.medicine_name];
+                const isItemSerious = isSerious || p.medicine_name === 'Referral Needed';
 
                 return (
                   <motion.div 
@@ -320,7 +322,7 @@ export const PrescriptionScreen = () => {
                     transition={{ delay: i * 0.1 }}
                     className={`p-6 glass-card border-l-4 transition-all ${
                       dispensed ? 'border-l-brand-success opacity-80' : 
-                      isSerious ? 'border-l-brand-danger' : 
+                      isItemSerious ? 'border-l-brand-danger' : 
                       'border-l-brand-secondary'
                     }`}
                   >
@@ -354,7 +356,7 @@ export const PrescriptionScreen = () => {
                             <CheckCircle2 size={14} strokeWidth={3} />
                             {t('prescription.dispensed')}
                           </div>
-                        ) : isSerious ? (
+                        ) : isItemSerious ? (
                           <div className="flex flex-col items-end gap-1">
                             <span className="text-brand-danger font-bold text-xs uppercase tracking-widest">{t('prescription.doctorReview')}</span>
                             <button disabled className="h-10 px-4 bg-white/5 border border-white/10 text-white/20 rounded-full font-bold text-[10px] uppercase tracking-widest cursor-not-allowed">
