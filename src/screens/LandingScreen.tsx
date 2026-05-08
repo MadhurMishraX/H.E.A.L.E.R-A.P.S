@@ -23,6 +23,7 @@ import {
 } from '../utils/serialComm';
 import { getSetting } from '../services/dbService';
 import { HardwareModal } from '../components/HardwareModal';
+import jsQR from 'jsqr';
 
 export const LandingScreen = () => {
   const { t, language, setLanguage, setCurrentPatient, hwStatus, hwMode } = useAppContext();
@@ -34,6 +35,7 @@ export const LandingScreen = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFirstAid = () => {
     navigate('/dispensing', { state: { isFirstAid: true } });
@@ -66,12 +68,43 @@ export const LandingScreen = () => {
         setCurrentPatient(fullPatient);
         navigate('/dashboard');
       } else {
-        setErrorMessage(t('landing.errorPatientNotFound'));
+        setErrorMessage(t('landing.errorPatientNotFound') || "QR code not recognized. Please register first.");
         setTimeout(() => setErrorMessage(''), 5000);
       }
     } catch (err) {
       setErrorMessage("Error connecting to database.");
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        if (!context) return;
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0, img.width, img.height);
+        
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+          handleScan(code.data);
+        } else {
+          setErrorMessage("No QR code found in the image.");
+          setTimeout(() => setErrorMessage(''), 5000);
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -325,8 +358,24 @@ export const LandingScreen = () => {
                 </motion.button>
               </form>
 
-              <div className="mt-8 pt-8 border-t border-white/10 text-center">
+              <div className="mt-8 pt-8 border-t border-white/10 text-center flex flex-col gap-4">
+                <input 
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
                 <button 
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-brand-primary font-bold flex items-center gap-2 mx-auto hover:underline"
+                >
+                  <Usb size={20} />
+                  Login via QR File
+                </button>
+                <button 
+                  type="button"
                   onClick={() => {
                     setShowLoginModal(false);
                     setShowScanner(true);
