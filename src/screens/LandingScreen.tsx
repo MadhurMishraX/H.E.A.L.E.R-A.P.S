@@ -95,7 +95,8 @@ export const LandingScreen = () => {
       await instance.start(
         cameraId,
         { fps: 15, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
+        async (decodedText) => {
+          await stopCamera();
           handleScan(decodedText);
           setShowScanner(false);
         },
@@ -110,12 +111,19 @@ export const LandingScreen = () => {
   };
 
   const stopCamera = async () => {
-    if (qrCodeInstance.current && qrCodeInstance.current.isScanning) {
-      try {
-        await qrCodeInstance.current.stop();
-        qrCodeInstance.current = null;
-      } catch (err) {
-        console.error("Failed to stop scanner", err);
+    if (qrCodeInstance.current) {
+      if (qrCodeInstance.current.isScanning) {
+        try {
+          await qrCodeInstance.current.stop();
+        } catch (err) {
+          console.error("Failed to stop scanner", err);
+        }
+      }
+      qrCodeInstance.current = null;
+      // Manually clear the container to prevent React removeChild errors
+      const container = document.getElementById("qr-reader");
+      if (container) {
+        container.innerHTML = "";
       }
     }
   };
@@ -401,15 +409,26 @@ export const LandingScreen = () => {
                     id="qr-reader" 
                     className="w-full aspect-square md:aspect-video rounded-3xl overflow-hidden border-2 border-white/5 bg-brand-card shadow-inner"
                   >
+                    {/* Html5Qrcode will inject video here. Keep this empty of React managed children. */}
+                  </div>
+
+                  {/* Overlays (Separate from qr-reader) */}
+                  <AnimatePresence>
                     {isCameraLoading && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center text-brand-secondary z-20 bg-brand-navy/50 backdrop-blur-sm">
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute inset-0 flex flex-col items-center justify-center text-brand-secondary z-20 bg-brand-navy/50 backdrop-blur-sm rounded-3xl"
+                      >
                         <Activity size={48} className="animate-spin mb-4" />
                         <p className="font-black uppercase tracking-widest text-sm">Accessing Camera...</p>
-                      </div>
+                      </motion.div>
                     )}
                     
                     {cameraError && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center text-brand-danger z-20 bg-brand-navy/80 backdrop-blur-sm p-8 text-center">
+                      <motion.div 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="absolute inset-0 flex flex-col items-center justify-center text-brand-danger z-20 bg-brand-navy/80 backdrop-blur-sm p-8 text-center rounded-3xl"
+                      >
                         <AlertCircle size={48} className="mb-4" />
                         <p className="font-bold text-lg mb-2">Camera Error</p>
                         <p className="text-sm opacity-70 mb-6">{cameraError}</p>
@@ -419,13 +438,13 @@ export const LandingScreen = () => {
                         >
                           Retry Permission
                         </button>
-                      </div>
+                      </motion.div>
                     )}
+                  </AnimatePresence>
 
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-text-muted pointer-events-none opacity-40">
-                      <QrCode size={64} strokeWidth={1} />
-                      <p className="mt-4 font-medium">Camera Feed Area</p>
-                    </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-text-muted pointer-events-none opacity-20 -z-10">
+                    <QrCode size={64} strokeWidth={1} />
+                    <p className="mt-4 font-medium">Camera Feed Area</p>
                   </div>
 
                   <div className="absolute top-4 left-4 w-10 h-10 border-t-4 border-l-4 border-brand-primary rounded-tl-2xl pointer-events-none" />
