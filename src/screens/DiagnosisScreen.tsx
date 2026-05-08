@@ -132,11 +132,13 @@ export const DiagnosisScreen = () => {
     
     const results = calculateDiagnosis(finalAnswers);
     const ageGroup = getAgeGroup(currentPatient.age);
+    const q1Ans = finalAnswers.find(a => a.question_id === 'Q1')?.selected_option;
+    const track = q1Ans === 0 ? 'A' : q1Ans === 1 ? 'B' : q1Ans === 2 ? 'C' : 'D';
+
+    const prescriptions = getDosageInfo(track, results.diagnosis, ageGroup, finalAnswers);
 
     setTimeout(async () => {
       try {
-        const diseaseMap = await getDiseaseMap(results.diagnosis);
-
         const sessionPayload = {
           patient_id: currentPatient.id!,
           timestamp: new Date().toISOString(),
@@ -150,20 +152,18 @@ export const DiagnosisScreen = () => {
 
         const sessionId = await createSession(sessionPayload);
 
-        // Always try to create a prescription entry if we have medicine info or just generic advice
-        const medicineName = diseaseMap?.medicine_name || "General Care / Consult Doctor";
-        const dosage = diseaseMap ? (ageGroup === 'child' ? diseaseMap.dosage_child : 
-                       ageGroup === 'adult' ? diseaseMap.dosage_adult : 
-                       diseaseMap.dosage_elderly) : "As recommended by physician";
-
-        await createPrescription({
-          session_id: sessionId,
-          medicine_name: medicineName,
-          dosage: dosage || "Consult pharmacist",
-          frequency: diseaseMap?.is_serious ? "URGENT" : "As instructed", 
-          duration: diseaseMap?.is_serious ? "Immediate" : "5 days",
-          compartment_number: diseaseMap?.compartment_number ?? null
-        });
+        // Create prescriptions for all recommended medicines
+        for (const p of prescriptions) {
+          await createPrescription({
+            session_id: sessionId,
+            medicine_name: p.medicine,
+            dosage: p.dosage,
+            frequency: p.frequency,
+            duration: p.duration,
+            instructions: p.instructions,
+            compartment_number: p.compartment ?? null
+          });
+        }
 
         setCurrentSession({ id: sessionId, ...sessionPayload });
         navigate('/prescription');
@@ -171,8 +171,9 @@ export const DiagnosisScreen = () => {
          console.error("Failed to save diagnosis", err);
          navigate('/prescription'); 
       }
-    }, 3000); // give 3 seconds for analyzing animation
+    }, 3500); 
   };
+
 
   const startCamera = async () => {
     setShowCamera(true);
