@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { 
@@ -75,17 +75,18 @@ export const RegistrationScreen = () => {
         email: formData.email,
         password: formData.password,
         language_preference: formData.language_preference,
-        qr_code: `HEALER_TEMP_${Date.now()}` // Temporary QR code
+        qr_code: `HEALER_TEMP_${Date.now()}`, // Temporary QR code
+        created_at: new Date().toISOString()
       };
 
-      const patientId = await registerPatient(patientData);
+      const patient = await registerPatient(patientData);
       
-      if (patientId) {
+      if (patient && patient.id) {
         // Generate final QR code with real ID
-        const finalQRCode = `HEALER_PATIENT_${patientId}`;
-        await updatePatientQR(patientId, finalQRCode);
+        const finalQRCode = `HEALER_PATIENT_${patient.id}`;
+        await updatePatientQR(patient.id, finalQRCode);
         
-        const finalPatient = { ...patientData, id: patientId, qr_code: finalQRCode };
+        const finalPatient = { ...patient, qr_code: finalQRCode };
         setRegisteredPatient(finalPatient);
         setShowQRModal(true);
         
