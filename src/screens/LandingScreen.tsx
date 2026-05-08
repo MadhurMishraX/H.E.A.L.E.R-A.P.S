@@ -12,9 +12,11 @@ import {
   Usb,
   Upload,
   Camera,
-  Image as ImageIcon
+  Image as ImageIcon,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { motion, AnimatePresence } from 'motion/react';
 import { loginPatient, loginPatientByQR, getPatientFullHistory } from '../services/dbService';
 import { 
@@ -35,32 +37,97 @@ export const LandingScreen = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   
+  // Camera States
+  const [cameras, setCameras] = useState<any[]>([]);
+  const [activeCameraId, setActiveCameraId] = useState<string>('');
+  const [isCameraLoading, setIsCameraLoading] = useState(false);
+  const [cameraError, setCameraError] = useState('');
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const qrCodeInstance = useRef<Html5Qrcode | null>(null);
 
   const handleFirstAid = () => {
     navigate('/dispensing', { state: { isFirstAid: true } });
   };
 
+  // Initialize Camera
   useEffect(() => {
-    let scanner: Html5QrcodeScanner | null = null;
     if (showScanner) {
-      setTimeout(() => {
-        scanner = new Html5QrcodeScanner(
-          "qr-reader",
-          { fps: 15, qrbox: { width: 300, height: 300 } },
-          /* verbose= */ false
-        );
-        scanner.render((decodedText) => {
-          handleScan(decodedText);
-          scanner?.clear();
-          setShowScanner(false);
-        }, (error) => {});
-      }, 100);
+      initCamera();
+    } else {
+      stopCamera();
     }
-    return () => {
-      if (scanner) scanner.clear().catch(err => console.error("Failed to clear scanner", err));
-    };
+    return () => stopCamera();
   }, [showScanner]);
+
+  const initCamera = async () => {
+    setIsCameraLoading(true);
+    setCameraError('');
+    try {
+      const devices = await Html5Qrcode.getCameras();
+      if (devices && devices.length > 0) {
+        setCameras(devices);
+        // Default to back camera (environment) if available
+        const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'));
+        const selectedId = backCamera ? backCamera.id : devices[0].id;
+        setActiveCameraId(selectedId);
+        startScanning(selectedId);
+      } else {
+        setCameraError("No cameras found on this device.");
+      }
+    } catch (err) {
+      console.error("Camera access error", err);
+      setCameraError("Camera permission denied or not available.");
+    } finally {
+      setIsCameraLoading(false);
+    }
+  };
+
+  const startScanning = async (cameraId: string) => {
+    if (qrCodeInstance.current) {
+      await stopCamera();
+    }
+    
+    const instance = new Html5Qrcode("qr-reader");
+    qrCodeInstance.current = instance;
+    
+    try {
+      await instance.start(
+        cameraId,
+        { fps: 15, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          handleScan(decodedText);
+          setShowScanner(false);
+        },
+        (errorMessage) => {
+          // Silent for scanning frame
+        }
+      );
+    } catch (err) {
+      console.error("Failed to start scanner", err);
+      setCameraError("Failed to start camera feed.");
+    }
+  };
+
+  const stopCamera = async () => {
+    if (qrCodeInstance.current && qrCodeInstance.current.isScanning) {
+      try {
+        await qrCodeInstance.current.stop();
+        qrCodeInstance.current = null;
+      } catch (err) {
+        console.error("Failed to stop scanner", err);
+      }
+    }
+  };
+
+  const toggleCamera = () => {
+    if (cameras.length < 2) return;
+    const currentIndex = cameras.findIndex(c => c.id === activeCameraId);
+    const nextIndex = (currentIndex + 1) % cameras.length;
+    const nextId = cameras[nextIndex].id;
+    setActiveCameraId(nextId);
+    startScanning(nextId);
+  };
 
   const handleScan = async (scannedId: string) => {
     try {
@@ -305,14 +372,28 @@ export const LandingScreen = () => {
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
               >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 rounded-xl bg-brand-primary/10 text-brand-primary">
-                    <Camera size={24} />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-brand-primary/10 text-brand-primary">
+                      <Camera size={24} />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">QR Scanner Hub</h2>
+                      <p className="text-xs text-text-muted uppercase tracking-widest font-bold">Live Scan or Drop File</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">QR Scanner Hub</h2>
-                    <p className="text-xs text-text-muted uppercase tracking-widest font-bold">Live Scan or Drop File</p>
-                  </div>
+                  
+                  {/* Camera Switcher */}
+                  {cameras.length > 1 && (
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      onClick={toggleCamera}
+                      className="p-3 rounded-xl bg-white/5 border border-white/10 text-brand-secondary hover:bg-brand-secondary/10 hover:border-brand-secondary transition-all flex items-center gap-2"
+                    >
+                      <RefreshCw size={20} />
+                      <span className="text-xs font-black uppercase tracking-widest">Switch</span>
+                    </motion.button>
+                  )}
                 </div>
 
                 <div className="relative group">
@@ -320,9 +401,30 @@ export const LandingScreen = () => {
                     id="qr-reader" 
                     className="w-full aspect-square md:aspect-video rounded-3xl overflow-hidden border-2 border-white/5 bg-brand-card shadow-inner"
                   >
+                    {isCameraLoading && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-brand-secondary z-20 bg-brand-navy/50 backdrop-blur-sm">
+                        <Activity size={48} className="animate-spin mb-4" />
+                        <p className="font-black uppercase tracking-widest text-sm">Accessing Camera...</p>
+                      </div>
+                    )}
+                    
+                    {cameraError && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-brand-danger z-20 bg-brand-navy/80 backdrop-blur-sm p-8 text-center">
+                        <AlertCircle size={48} className="mb-4" />
+                        <p className="font-bold text-lg mb-2">Camera Error</p>
+                        <p className="text-sm opacity-70 mb-6">{cameraError}</p>
+                        <button 
+                          onClick={initCamera}
+                          className="px-6 py-2 bg-brand-danger/20 border border-brand-danger/30 rounded-full text-xs font-black uppercase tracking-widest hover:bg-brand-danger/30"
+                        >
+                          Retry Permission
+                        </button>
+                      </div>
+                    )}
+
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-text-muted pointer-events-none opacity-40">
                       <QrCode size={64} strokeWidth={1} />
-                      <p className="mt-4 font-medium">Initializing Secure Camera...</p>
+                      <p className="mt-4 font-medium">Camera Feed Area</p>
                     </div>
                   </div>
 
@@ -331,10 +433,12 @@ export const LandingScreen = () => {
                   <div className="absolute bottom-4 left-4 w-10 h-10 border-b-4 border-l-4 border-brand-primary rounded-bl-2xl pointer-events-none" />
                   <div className="absolute bottom-4 right-4 w-10 h-10 border-b-4 border-r-4 border-brand-primary rounded-br-2xl pointer-events-none" />
 
-                  <motion.div 
-                    animate={{ top: ['10%', '90%', '10%'] }} transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                    className="absolute left-4 right-4 h-0.5 bg-brand-secondary shadow-[0_0_15px_var(--color-brand-secondary)] z-10 pointer-events-none opacity-50"
-                  />
+                  {!cameraError && !isCameraLoading && (
+                    <motion.div 
+                      animate={{ top: ['10%', '90%', '10%'] }} transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                      className="absolute left-4 right-4 h-0.5 bg-brand-secondary shadow-[0_0_15px_var(--color-brand-secondary)] z-10 pointer-events-none opacity-50"
+                    />
+                  )}
 
                   <AnimatePresence>
                     {isDragging && (
@@ -353,7 +457,7 @@ export const LandingScreen = () => {
                 <div className="mt-6 flex items-center justify-between text-text-muted text-sm font-medium">
                   <div className="flex items-center gap-2">
                     <Smartphone size={16} />
-                    <span>Point camera at your HEALER Card</span>
+                    <span>Point camera at your QR code</span>
                   </div>
                   <div className="h-px flex-1 mx-6 bg-white/5" />
                   <span>OR</span>
