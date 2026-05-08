@@ -47,6 +47,7 @@ export const PrescriptionScreen = () => {
   const [loading, setLoading] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [settings, setSettings] = useState<any>({});
 
   const fetchData = async () => {
@@ -128,11 +129,14 @@ export const PrescriptionScreen = () => {
 
   const handleSendEmail = async () => {
     setIsSendingEmail(true);
+    setEmailStatus('idle');
     try {
       await sendPrescriptionEmail(currentPatient, currentSession, prescriptions);
-      alert(t('prescription.reportSent'));
+      setEmailStatus('success');
+      setTimeout(() => setEmailStatus('idle'), 3000);
     } catch (err) {
-      alert(t('prescription.reportFailed'));
+      setEmailStatus('error');
+      setTimeout(() => setEmailStatus('idle'), 4000);
     } finally {
       setIsSendingEmail(false);
     }
@@ -488,6 +492,49 @@ export const PrescriptionScreen = () => {
               <button 
                 onClick={() => setShowContactModal(false)}
                 className="mt-8 text-sm font-bold text-text-muted uppercase tracking-widest hover:text-white transition-colors"
+              >
+                Dismiss
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Email Status Feedback Modal */}
+      <AnimatePresence>
+        {emailStatus !== 'idle' && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className={`glass-card p-10 flex flex-col items-center text-center max-w-sm border-t-4 ${
+                emailStatus === 'success' ? 'border-t-brand-success' : 'border-t-brand-danger'
+              }`}
+            >
+              <button 
+                onClick={() => setEmailStatus('idle')}
+                className="absolute top-4 right-4 text-text-muted hover:text-white"
+              >
+                <X size={20} />
+              </button>
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
+                emailStatus === 'success' ? 'bg-brand-success/10 text-brand-success' : 'bg-brand-danger/10 text-brand-danger'
+              }`}>
+                {emailStatus === 'success' ? <CheckCircle2 size={48} /> : <AlertCircle size={48} />}
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2">
+                {emailStatus === 'success' ? 'Report Sent!' : 'Dispatch Failed'}
+              </h3>
+              <p className="text-text-secondary font-medium">
+                {emailStatus === 'success' 
+                  ? 'Your diagnosis report has been successfully sent to your registered email.' 
+                  : 'We could not reach the email server. Please check your configuration.'}
+              </p>
+              <button 
+                onClick={() => setEmailStatus('idle')}
+                className="mt-8 px-8 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white/10"
               >
                 Dismiss
               </button>
