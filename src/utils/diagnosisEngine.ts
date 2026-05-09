@@ -507,7 +507,7 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     return {
       diagnosis: 'URGENT - DOCTOR NEEDED',
       confidence: 100,
-      action: "refer",
+      action: "auto_referred",
       is_serious: true,
       note: "Emergency red flags detected. Please go to the hospital immediately."
     };
@@ -527,9 +527,9 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     const a9 = getAns('Q_A9');
 
     // Red Flags
-    if (a9 !== -1 && a9 !== 4) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Serious symptoms detected." };
-    if (a7 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Symptoms lasting 7+ days." };
-    if (a8 === 1 && a7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "No relief after medicine for 5+ days." };
+    if (a9 !== -1 && a9 !== 4) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Serious symptoms detected." };
+    if (a7 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Symptoms lasting 7+ days." };
+    if (a8 === 1 && a7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "No relief after medicine for 5+ days." };
 
     // Diagnosis
     if (a6 === 0 && (a7 >= 0 && a7 <= 1)) return { diagnosis: 'SEASONAL FLU', action: "dispense", compartment: 1, confidence: 95 };
@@ -551,9 +551,9 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     const b9 = getAns('Q_B9');
 
     // Red Flags
-    if (b2 === 2 && b7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "New back-of-head pain (could be BP related)." };
-    if (b9 !== -1 && b9 !== 3) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true };
-    if (b3 === 2 && b4 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Severe headache for 3+ days." };
+    if (b2 === 2 && b7 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "New back-of-head pain (could be BP related)." };
+    if (b9 !== -1 && b9 !== 3) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "auto_referred", is_serious: true };
+    if (b3 === 2 && b4 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Severe headache for 3+ days." };
 
     // Diagnosis
     if (b6 === 0) return { diagnosis: 'FLU-RELATED HEADACHE', action: "dispense", compartment: 1, confidence: 90 };
@@ -576,11 +576,11 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     const c9 = getAns('Q_C9');
 
     // Red Flags
-    if (c7 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true, note: "Blood detected." };
-    if (c4 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Frequent episodes (>6)." };
-    if (c5 === 2) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true, note: "Cannot keep fluids down." };
-    if (c6 === 0) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "High fever with stomach issues." };
-    if (c9 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Symptoms >3 days." };
+    if (c7 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Blood detected." };
+    if (c4 === 2) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Frequent episodes (>6)." };
+    if (c5 === 2) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Cannot keep fluids down." };
+    if (c6 === 0) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "High fever with stomach issues." };
+    if (c9 === 3) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Symptoms >3 days." };
 
     // Diagnosis
     if (c2 === 3) return { diagnosis: 'ACIDITY / GASTRITIS', action: "dispense", confidence: 95, note: "Prescription only." };
@@ -605,9 +605,9 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
     const d9 = getAns('Q_D9');
 
     // Red Flags
-    if (d9 === 0) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Baby <6mo or deep wounds." };
-    if ((d2 === 3 || d7 === 0) && d6 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "refer", is_serious: true, note: "Rash + High Fever." };
-    if (d7 === 0 && d2 === 3 && d6 !== 2) return { diagnosis: 'DOCTOR NEEDED', action: "refer", is_serious: true, note: "Fast spreading infection." };
+    if (d9 === 0) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Baby <6mo or deep wounds." };
+    if ((d2 === 3 || d7 === 0) && d6 === 0) return { diagnosis: 'URGENT - DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Rash + High Fever." };
+    if (d7 === 0 && d2 === 3 && d6 !== 2) return { diagnosis: 'DOCTOR NEEDED', action: "auto_referred", is_serious: true, note: "Fast spreading infection." };
 
     // Diagnosis
     if (d2 === 0 && (d3 === 1 || d3 === 0 || d3 === 2) && d5 === 0) {
@@ -625,7 +625,7 @@ export function calculateDiagnosis(sessionAnswers: any[]) {
   return {
     diagnosis: 'OTHER',
     confidence: 100,
-    action: "refer",
+    action: "auto_referred",
     is_serious: true,
     note: "Symptom combination requires clinical evaluation."
   };

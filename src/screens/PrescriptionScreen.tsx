@@ -348,6 +348,12 @@ export const PrescriptionScreen = () => {
                             {p.duration}
                           </div>
                         </div>
+
+                        {p.instructions && (
+                          <p className="text-[11px] text-text-muted mt-3 italic leading-relaxed">
+                            {p.instructions}
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex flex-col items-end gap-3">

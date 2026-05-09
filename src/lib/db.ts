@@ -1,4 +1,4 @@
-import Dexie, { type Table } from 'dexie';
+import { Dexie, type Table } from 'dexie';
 
 export interface Patient {
   id?: number;
@@ -31,6 +31,7 @@ export interface Prescription {
   dosage: string;
   frequency: string;
   duration: string;
+  instructions: string;
   compartment_number: number | null;
 }
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { QUESTION_TREE, calculateDiagnosis, getNextQuestion } from '../utils/diagnosisEngine';
 import { getAgeGroup } from '../utils/ageUtils';
+import { getDosageInfo } from '../utils/dosageRules';
 import { createSession, createPrescription, getDiseaseMap } from '../services/dbService';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
