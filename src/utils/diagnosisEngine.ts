@@ -438,6 +438,11 @@ export const QUESTION_TREE: Record<string, Question> = {
 };
 
 export function getNextQuestion(currentQuestionId: string, selectedOption: any, scores: any) {
+  // Q_CLOSE is the final question — no more questions after it
+  if (currentQuestionId === 'Q_CLOSE') {
+    return null;
+  }
+
   if (currentQuestionId === 'Q1') {
     if (selectedOption === 0) return 'Q_A2';
     if (selectedOption === 1) return 'Q_B2';

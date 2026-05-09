@@ -131,26 +131,35 @@ export const DiagnosisScreen = () => {
   const finalizeDiagnosis = async (finalAnswers: any[]) => {
     setIsAnalyzing(true);
     
-    const results = calculateDiagnosis(finalAnswers);
-    const ageGroup = getAgeGroup(currentPatient.age);
-    const q1Ans = finalAnswers.find(a => a.question_id === 'Q1')?.selected_option;
-    const track = q1Ans === 0 ? 'A' : q1Ans === 1 ? 'B' : q1Ans === 2 ? 'C' : 'D';
+    let results: any;
+    let prescriptions: any[] = [];
+    let sessionPayload: any;
 
-    const prescriptions = getDosageInfo(track, results.diagnosis, ageGroup, finalAnswers);
+    try {
+      results = calculateDiagnosis(finalAnswers);
+      const ageGroup = getAgeGroup(currentPatient.age);
+      const q1Ans = finalAnswers.find(a => a.question_id === 'Q1')?.selected_option;
+      const track = q1Ans === 0 ? 'A' : q1Ans === 1 ? 'B' : q1Ans === 2 ? 'C' : 'D';
+      prescriptions = getDosageInfo(track, results.diagnosis, ageGroup, finalAnswers);
+    } catch (err) {
+      console.error("Diagnosis calculation error", err);
+      results = { diagnosis: 'UNKNOWN', action: 'auto_referred', confidence: 0 };
+      prescriptions = [];
+    }
+
+    sessionPayload = {
+      patient_id: currentPatient.id!,
+      timestamp: new Date().toISOString(),
+      diagnosed_disease: results.diagnosis,
+      confidence_score: results.confidence || 100,
+      top_alternatives: "",
+      ai_used: aiResult ? 1 : 0,
+      ai_result: aiResult ? JSON.stringify(aiResult) : "",
+      action_taken: results.action
+    };
 
     setTimeout(async () => {
       try {
-        const sessionPayload = {
-          patient_id: currentPatient.id!,
-          timestamp: new Date().toISOString(),
-          diagnosed_disease: results.diagnosis,
-          confidence_score: results.confidence,
-          top_alternatives: "",
-          ai_used: aiResult ? 1 : 0,
-          ai_result: aiResult ? JSON.stringify(aiResult) : "",
-          action_taken: results.action
-        };
-
         const sessionId = await createSession(sessionPayload);
 
         // Create prescriptions for all recommended medicines
@@ -170,6 +179,8 @@ export const DiagnosisScreen = () => {
         navigate('/prescription');
       } catch (err) {
          console.error("Failed to save diagnosis", err);
+         // Still navigate even on DB error — set a minimal session so PrescriptionScreen doesn't redirect
+         setCurrentSession({ id: -1, ...sessionPayload });
          navigate('/prescription'); 
       }
     }, 3500); 
@@ -430,7 +441,7 @@ export const DiagnosisScreen = () => {
                  }`}
                >
                  <ArrowLeft size={20} />
-                 {t('common.back') || 'Back'}
+                 {t('adminLogin.back')}
                </motion.button>
 
                {(currentQuestion?.type === 'multiple_select' || currentQuestion?.type === 'multiple_choice') && (
@@ -443,7 +454,7 @@ export const DiagnosisScreen = () => {
                     selectedOptions.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
-                  {t('common.next') || 'Next'}
+                  {t('diagnosis.next')}
                   <ArrowRight size={20} />
                 </motion.button>
                )}
