@@ -112,9 +112,20 @@ npm run dev
 ---
 
 ## 👨‍💻 The Team
-Developed with passion and precision by:
+
+### 💻 Developers
+Developed with passion and clinical precision by:
 - **Madhur Mishra** ([@Madhurmishrax](https://github.com/Madhurmishrax)) — Core Logic & Software Architecture
 - **Nikhil Kumar Yadav** ([@NikhilKY64](https://github.com/NikhilKY64)) — Hardware Integration & Firmware
+
+### 🏗️ Structural Engineers & Creative Design
+Special thanks to our teammates who brought structural integrity and creative vision to this project:
+- **Shakshi Singh**
+- **Riya Yadav**
+- **Kashish Adhikari**
+
+> [!NOTE]
+> This project is a result of seamless collaboration between software logic and physical design. We extend equal respect to our developers for the code and our structural team for their immense contribution to the project's creativity and hardware architecture.
 
 ---
 
