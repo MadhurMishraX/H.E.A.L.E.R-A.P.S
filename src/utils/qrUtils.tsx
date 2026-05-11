@@ -7,12 +7,13 @@ export const generateQRString = (patientId: string | number) => {
 
 export const QRCodeDisplay = ({ qrString, clinicName }: { qrString: string; clinicName?: string }) => {
   return (
-    <div className="flex flex-col items-center gap-4 p-8 border-4 border-blue-600 rounded-3xl bg-white shadow-xl">
-      <div className="p-4 bg-white rounded-2xl">
+    <div className="flex flex-col items-center gap-4 p-4 bg-transparent">
+      <div className="p-0 bg-transparent">
         <QRCode 
           value={qrString} 
           size={256}
-          fgColor="#1e3a8a" // dark blue
+          fgColor="#00BCD4" // mid blue (brand-secondary)
+          bgColor="transparent"
         />
       </div>
       {clinicName && (
