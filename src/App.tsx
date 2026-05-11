@@ -12,7 +12,7 @@ import {
   AdminDashboardScreen
 } from './screens';
 import { Loader2 } from 'lucide-react';
-import { initSerial, onMessage } from './utils/serialComm';
+import { FullScreenButton } from './components/FullScreenButton';
 
 const MainLayout = () => {
   const { setCurrentPatient, setCurrentSession } = useAppContext();
@@ -40,6 +40,7 @@ const MainLayout = () => {
 
   return (
     <div className="w-screen h-screen overflow-auto bg-white text-gray-900 select-none font-sans relative">
+      <FullScreenButton />
       <Routes>
         <Route path="/" element={<LandingScreen />} />
         <Route path="/registration" element={<RegistrationScreen />} />
