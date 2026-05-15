@@ -26,7 +26,7 @@ interface HardwareModalProps {
 }
 
 export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
-  const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'error'>(getConnectionStatus() === 'connected' ? 'connected' : 'idle');
+  const [status, setStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'error'>(getConnectionStatus());
   const [activeType, setActiveType] = useState<'usb' | 'bluetooth' | null>(getConnectionStatus() === 'connected' ? getHardwareConfig().type as any : null);
   const [selectedType, setSelectedType] = useState<'usb' | 'bluetooth'>(activeType || 'bluetooth');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
         const type = getHardwareConfig().type as any;
         setActiveType(type);
         setSelectedType(type);
-      } else if (newStatus === 'idle') {
+      } else if (newStatus === 'disconnected') {
         setActiveType(null);
       }
       
@@ -61,12 +61,12 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
 
   const handleDisconnect = async () => {
     await closeHardware();
-    setStatus('idle');
+    setStatus('disconnected');
     setActiveType(null);
   };
 
   const handleCancel = () => {
-    setStatus('idle');
+    setStatus('disconnected');
     setErrorMsg(null);
   };
 
