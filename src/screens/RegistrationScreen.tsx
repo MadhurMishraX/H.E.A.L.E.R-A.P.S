@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { registerPatient, updatePatientQR } from '../services/dbService';
 
 export const RegistrationScreen = () => {
-  const { t, language, setCurrentPatient } = useAppContext();
+  const { t, language, setLanguage, setCurrentPatient } = useAppContext();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -255,7 +255,10 @@ export const RegistrationScreen = () => {
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       key={l}
-                      onClick={() => setFormData({...formData, language_preference: l as any})}
+                      onClick={() => {
+                        setLanguage(l as any);
+                        setFormData({...formData, language_preference: l as any});
+                      }}
                       className={`flex-1 h-16 rounded-xl text-xl font-bold transition-all border ${
                         formData.language_preference === l 
                           ? 'bg-brand-primary text-white border-brand-primary shadow-[0_0_20px_rgba(33,150,243,0.4)]' 

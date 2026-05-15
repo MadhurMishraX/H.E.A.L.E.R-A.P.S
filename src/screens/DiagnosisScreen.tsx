@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 export const DiagnosisScreen = () => {
-  const { t, language, currentPatient, setCurrentSession } = useAppContext();
+  const { t, language, setLanguage, currentPatient, setCurrentSession } = useAppContext();
   const navigate = useNavigate();
 
   const [currentQuestionId, setCurrentQuestionId] = useState<string>('Q1');
@@ -355,12 +355,23 @@ export const DiagnosisScreen = () => {
             className="glass-card w-full p-12 flex flex-col max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-brand-secondary"
             style={{ minHeight: '60%' }}
           >
-            <div className="flex items-start justify-between mb-8">
+             <div className="flex items-start justify-between mb-8">
                <div className="flex items-center gap-3 bg-[rgba(0,188,212,0.1)] px-4 py-2 rounded-full border border-brand-secondary/30 text-brand-secondary">
                   <span className="text-xs font-bold uppercase tracking-[1.5px]">
                     {t('diagnosis.question')} {sessionAnswers.length + 1}
                   </span>
                </div>
+               
+               {/* Inline Language Toggle */}
+               <motion.button
+                 whileTap={{ scale: 0.95 }}
+                 onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+                 className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full border border-white/10 transition-colors group"
+               >
+                 <span className={`text-xs font-bold ${language === 'en' ? 'text-brand-secondary' : 'text-text-muted group-hover:text-text-primary'}`}>A</span>
+                 <div className="w-px h-3 bg-white/20" />
+                 <span className={`text-sm font-bold ${language === 'hi' ? 'text-brand-secondary' : 'text-text-muted group-hover:text-text-primary'}`}>अ</span>
+               </motion.button>
             </div>
 
             <h2 className="text-4xl font-bold text-text-primary mb-6 leading-tight">
