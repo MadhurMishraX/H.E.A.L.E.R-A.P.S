@@ -1,4 +1,7 @@
-node_modules/
+node_modules
+server/node_modules
+healer-storage/
+arduino/esp32cam_config.h
 build/
 dist/
 coverage/
