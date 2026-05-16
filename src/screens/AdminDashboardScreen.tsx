@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { 
@@ -30,7 +30,10 @@ import {
   Usb,
   Cpu,
   RefreshCw,
-  X
+  X,
+  Camera,
+  Image,
+  Eye
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as ReTooltip, Legend,
@@ -54,6 +57,13 @@ import {
 import { sendQRCodeEmail } from '../services/emailService';
 import QRCode from 'qrcode';
 import { db } from '../lib/db';
+import {
+  loadWifiConfig,
+  getPatientSessions,
+  getImageUrl,
+  type DiagnosisSession,
+  type SessionImage,
+} from '../utils/wifiService';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { HardwareModal } from '../components/HardwareModal';
 
@@ -507,6 +517,10 @@ const PatientsTab = () => {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [expandedSession, setExpandedSession] = useState<number | null>(null);
+  const [pictureSessions, setPictureSessions] = useState<DiagnosisSession[]>([]);
+  const [picturesLoading, setPicturesLoading] = useState(false);
+  const [expandedPicSession, setExpandedPicSession] = useState<string | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const selectPatient = async (id: number) => {
     setLoading(true);
@@ -523,6 +537,14 @@ const PatientsTab = () => {
       }));
 
       setSelectedPatient({ ...patient, sessions: enrichedSessions });
+      // Fetch diagnosis pictures from image server
+      const cfg = loadWifiConfig();
+      setPicturesLoading(true);
+      try {
+        const res = await getPatientSessions(cfg.serverUrl, id);
+        setPictureSessions(res.sessions || []);
+      } catch { setPictureSessions([]); }
+      setPicturesLoading(false);
     } catch (err) {
       console.error("Failed to fetch patient history", err);
     } finally {
@@ -693,6 +715,112 @@ const PatientsTab = () => {
                   </AnimatePresence>
                 </div>
               ))}
+
+              {/* ===== DIAGNOSIS PICTURES SECTION ===== */}
+              <h3 className="text-sm font-bold text-text-muted uppercase tracking-[0.2em] mb-2 mt-6 flex items-center gap-2">
+                <Camera size={16} /> Diagnosis Pictures
+              </h3>
+              {picturesLoading ? (
+                <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-brand-secondary" size={32} /></div>
+              ) : pictureSessions.length === 0 ? (
+                <div className="glass-card !bg-white/5 !border-white/5 p-8 text-center">
+                  <Image size={40} className="mx-auto mb-3 text-text-muted/30" />
+                  <p className="text-sm text-text-muted">No diagnosis images captured yet.</p>
+                  <p className="text-[10px] text-text-muted/60 mt-1">Images will appear here when the ESP32-CAM captures during dispensing.</p>
+                </div>
+              ) : pictureSessions.map((ps) => {
+                const cfg = loadWifiConfig();
+                const isExpanded = expandedPicSession === ps.sessionName;
+                const beforeImgs = ps.images.filter(i => i.type === 'BEFORE');
+                const duringImgs = ps.images.filter(i => i.type === 'DURING');
+                const afterImgs = ps.images.filter(i => i.type === 'AFTER');
+                return (
+                  <div key={ps.sessionName} className="border border-white/10 bg-brand-navy/50 rounded-3xl overflow-hidden">
+                    <button
+                      onClick={() => setExpandedPicSession(isExpanded ? null : ps.sessionName)}
+                      className={`w-full p-5 flex justify-between items-center transition-colors hover:bg-white/5 ${isExpanded ? 'bg-white/5' : ''}`}
+                    >
+                      <div className="flex items-center gap-4 text-left">
+                        <div className="w-10 h-10 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-brand-primary">
+                          <Camera size={18} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-white">{ps.sessionName}</h4>
+                          <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mt-0.5">{ps.imageCount} images</p>
+                        </div>
+                      </div>
+                      {isExpanded ? <ChevronUp size={20} className="text-text-muted" /> : <ChevronDown size={20} className="text-text-muted" />}
+                    </button>
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden border-t border-white/10">
+                          <div className="p-6 flex flex-col gap-4">
+                            {/* BEFORE */}
+                            {beforeImgs.length > 0 && (
+                              <div>
+                                <p className="text-[9px] font-black text-brand-warning uppercase tracking-[0.2em] mb-2">Before Dispensing</p>
+                                <div className="flex gap-3 flex-wrap">
+                                  {beforeImgs.map(img => (
+                                    <button key={img.filename} onClick={() => setLightboxImg(getImageUrl(cfg.serverUrl, img.url))} className="w-24 h-24 rounded-xl overflow-hidden border border-white/10 hover:border-brand-primary/50 transition-all hover:scale-105 relative group">
+                                      <img src={getImageUrl(cfg.serverUrl, img.url)} alt={img.filename} className="w-full h-full object-cover" />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><Eye size={16} className="text-white" /></div>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {/* DURING */}
+                            {duringImgs.length > 0 && (
+                              <div>
+                                <p className="text-[9px] font-black text-brand-primary uppercase tracking-[0.2em] mb-2">During Dispensing ({duringImgs.length})</p>
+                                <div className="flex gap-3 flex-wrap max-h-48 overflow-y-auto">
+                                  {duringImgs.map(img => (
+                                    <button key={img.filename} onClick={() => setLightboxImg(getImageUrl(cfg.serverUrl, img.url))} className="w-24 h-24 rounded-xl overflow-hidden border border-white/10 hover:border-brand-primary/50 transition-all hover:scale-105 relative group shrink-0">
+                                      <img src={getImageUrl(cfg.serverUrl, img.url)} alt={img.filename} className="w-full h-full object-cover" />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><Eye size={16} className="text-white" /></div>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {/* AFTER */}
+                            {afterImgs.length > 0 && (
+                              <div>
+                                <p className="text-[9px] font-black text-brand-success uppercase tracking-[0.2em] mb-2">After Dispensing</p>
+                                <div className="flex gap-3 flex-wrap">
+                                  {afterImgs.map(img => (
+                                    <button key={img.filename} onClick={() => setLightboxImg(getImageUrl(cfg.serverUrl, img.url))} className="w-24 h-24 rounded-xl overflow-hidden border border-white/10 hover:border-brand-primary/50 transition-all hover:scale-105 relative group">
+                                      <img src={getImageUrl(cfg.serverUrl, img.url)} alt={img.filename} className="w-full h-full object-cover" />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><Eye size={16} className="text-white" /></div>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+
+              {/* Lightbox */}
+              <AnimatePresence>
+                {lightboxImg && (
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-8 cursor-pointer"
+                    onClick={() => setLightboxImg(null)}
+                  >
+                    <motion.img
+                      initial={{ scale: 0.8 }} animate={{ scale: 1 }}
+                      src={lightboxImg} alt="Diagnosis" className="max-w-full max-h-full rounded-2xl shadow-2xl border border-white/10"
+                    />
+                    <button className="absolute top-8 right-8 text-white/60 hover:text-white"><X size={32} /></button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         ) : (
