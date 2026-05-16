@@ -1,11 +1,8 @@
 /*
  * H.E.A.L.E.R - Arduino Mega Firmware
  * ------------------------------------
- * Controls 4 medicine compartments (servos), ESP32-CAM trigger,
- * and RFID authentication for the H.E.A.L.E.R system.
- * 
- * Hardware: Arduino Mega 2560
- * Libraries: Servo, SPI, MFRC522
+ * IMPORTANT: In Arduino IDE, go to Tools -> Board and select "Arduino Mega or Mega 2560".
+ * REQUIRED LIBRARIES: Servo, SPI, MFRC522 (Install via Library Manager).
  */
 
 #include <Servo.h>
@@ -179,15 +176,31 @@ void openServo(int index) {
   servos[index].write(OPEN_ANGLES[index]);
   delay(400); 
   servos[index].detach(); 
+  
+  // Send camera commands to ESP32-CAM via Serial1
+  // TAKE_BEFORE: capture one image before the compartment is fully open
+  Serial1.println("TAKE_BEFORE_" + String(index + 1));
+  delay(100); // Brief gap so ESP32 can process
+  // START_SESSION: begin continuous 1fps capture while compartment is open
+  Serial1.println("START_SESSION_" + String(index + 1));
+  
   sendResponse("ACK_OPEN_" + String(index + 1));
   blinkLED(2, 200);
 }
 
 void closeServo(int index) {
+  // END_SESSION: stop continuous capture before closing
+  Serial1.println("END_SESSION_" + String(index + 1));
+  delay(100); // Brief gap so ESP32 can process
+  
   servos[index].attach(SERVO_PINS[index]);
   servos[index].write(CLOSE_ANGLES[index]);
   delay(800); 
   servos[index].detach();
+  
+  // TAKE_AFTER: capture one image after compartment has closed
+  Serial1.println("TAKE_AFTER_" + String(index + 1));
+  
   sendResponse("ACK_CLOSE_" + String(index + 1));
   blinkLED(1, 200);
 }
