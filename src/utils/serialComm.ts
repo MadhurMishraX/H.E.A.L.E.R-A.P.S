@@ -3,8 +3,10 @@
  * -------------------------------------------------------------
  */
 
-export type ConnectionType = 'usb' | 'bluetooth' | 'none';
+export type ConnectionType = 'usb' | 'bluetooth' | 'wifi' | 'none';
 export type HardwareStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+
+import { loadWifiConfig, sendWifiCommand, testESP32Connection } from './wifiService';
 
 let port: any = null;
 let reader: any = null;
@@ -46,10 +48,23 @@ export async function initHardware(type: ConnectionType): Promise<{ success: boo
     return await initWebSerial();
   } else if (type === 'bluetooth') {
     return await initWebBluetooth();
+  } else if (type === 'wifi') {
+    return await initWifiGateway();
   }
   
   updateStatus('disconnected');
   return { success: false, error: 'INVALID_TYPE' };
+}
+
+async function initWifiGateway() {
+  const config = loadWifiConfig();
+  const res = await testESP32Connection(config.esp32Url);
+  if (res.success) {
+    updateStatus('connected');
+    return { success: true };
+  }
+  updateStatus('error', res.error);
+  return { success: false, error: res.error };
 }
 
 async function initWebSerial() {
@@ -197,6 +212,11 @@ async function processQueue() {
         await bleCharacteristic.writeValue(new TextEncoder().encode(nextCommand));
         // Safety delay for the BLE-to-Serial bridge on the ESP32
         await new Promise(r => setTimeout(r, 600));
+      } else if (_connType === 'wifi') {
+        const config = loadWifiConfig();
+        // Remove trailing newline for the HTTP gateway
+        const cleanCmd = nextCommand.trim();
+        await sendWifiCommand(config.esp32Url, cleanCmd);
       }
       console.log(`[QUEUE]: Sent ${nextCommand.trim()}`);
     } catch (err) {

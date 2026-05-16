@@ -298,6 +298,10 @@ void initHTTPServer() {
   // GET /capture — On-demand single capture (for testing)
   server.on("/capture", HTTP_GET, handleCapture);
 
+  // GET /command — Remote Control Gateway (forwards to Mega)
+  // Usage: /command?cmd=OPEN_1
+  server.on("/command", HTTP_GET, handleCommand);
+
   // POST /set_session — Configure patient and session info from dashboard
   server.on("/set_session", HTTP_POST, handleSetSession);
 
@@ -357,6 +361,29 @@ void handleCapture() {
   server.send(200, "image/jpeg", "");
   server.sendContent((const char *)fb->buf, fb->len);
   esp_camera_fb_return(fb);
+}
+
+// --- GET /command (Gateway) ---
+void handleCommand() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  
+  if (!server.hasArg("cmd")) {
+    server.send(400, "application/json", "{\"error\":\"Missing cmd parameter\"}");
+    return;
+  }
+
+  String cmd = server.arg("cmd");
+  Serial.println(cmd); // Forward to Arduino Mega
+  
+  Serial.print("[GATEWAY] Forwarded to Mega: ");
+  Serial.println(cmd);
+
+  String json = "{";
+  json += "\"success\":true,";
+  json += "\"command\":\"" + cmd + "\"";
+  json += "}";
+
+  server.send(200, "application/json", json);
 }
 
 // --- POST /set_session ---

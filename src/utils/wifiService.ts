@@ -224,6 +224,42 @@ export async function configureESP32Session(
   }
 }
 
+/**
+ * Send a serial command to the Arduino Mega via the ESP32-CAM gateway.
+ * Used for wireless control in Wi-Fi mode.
+ */
+export async function sendWifiCommand(
+  esp32Url: string,
+  command: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    const response = await fetch(`${esp32Url}/command?cmd=${encodeURIComponent(command)}`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      return { 
+        success: false, 
+        error: `Gateway returned HTTP ${response.status}` 
+      };
+    }
+
+    const data = await response.json();
+    return { success: data.success };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: `Wi-Fi Command failed: ${err.message}`,
+    };
+  }
+}
+
 // =========================================================================
 // Image Retrieval
 // =========================================================================

@@ -6,20 +6,20 @@ import {
   Loader2, 
   X,
   Settings,
-  ShieldCheck,
-  AlertCircle,
-  Wifi,
-  WifiOff,
-  PowerOff,
+  Wifi, 
+  ShieldCheck, 
+  AlertCircle, 
+  RefreshCw, 
+  Smartphone, 
   Globe,
   Camera,
   Server,
   CheckCircle2,
-  RefreshCw,
   Signal,
   Info
 } from 'lucide-react';
 import { 
+  initHardware,
   requestWebSerialPort, 
   requestBluetoothDevice, 
   closeHardware,
@@ -141,6 +141,11 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
       setWifiError(serverResult.error || 'Backend server is offline.');
     } else if (!esp32Result.success) {
       setWifiError(esp32Result.error || 'ESP32-CAM is offline.');
+    }
+
+    // If successful, activate Wi-Fi mode globally
+    if (serverResult.success && esp32Result.success) {
+      await initHardware('wifi');
     }
 
     setWifiTesting(false);

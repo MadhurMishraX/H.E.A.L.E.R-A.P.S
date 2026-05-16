@@ -11,13 +11,12 @@
 #include <Servo.h>
 #include <avr/wdt.h>
 
-
 // --- Configuration ---
 // Individual Angles for each servo [1, 2, 3, 4, FA]
 // If a door moves the WRONG way, just swap the OPEN and CLOSE numbers for that
 // door! [Door 1, Door 2, Door 3, Door 4, First Aid]
-const int OPEN_ANGLES[] = {40, 40, 155, 155, 155}; //
-const int CLOSE_ANGLES[] = {155, 155, 40, 40, 40};
+const int OPEN_ANGLES[] = {34, 35, 35, 42, 40};
+const int CLOSE_ANGLES[] = {153, 150, 152, 157, 155};
 
 const int BAUD_RATE = 9600;
 unsigned long lastRFIDCheck = 0;
@@ -112,12 +111,14 @@ void handleChar(char inChar) {
  */
 void processCommand(String cmd) {
   cmd.trim();
-  if (cmd.length() == 0) return;
+  if (cmd.length() == 0)
+    return;
 
   // --- LOOP PREVENTION ---
   // Ignore messages that are not commands (replies from the other board)
-  if (cmd.startsWith("DEBUG") || cmd.startsWith("ACK") || cmd.startsWith("ERR") || cmd.startsWith("[")) {
-    return; 
+  if (cmd.startsWith("DEBUG") || cmd.startsWith("ACK") ||
+      cmd.startsWith("ERR") || cmd.startsWith("[")) {
+    return;
   }
 
   sendResponse("DEBUG_RECV: [" + cmd + "]");
