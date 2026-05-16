@@ -100,6 +100,12 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
     setErrorMsg(null);
   };
 
+  // --- Reset errors when switching tabs ---
+  useEffect(() => {
+    setErrorMsg(null);
+    setWifiError(null);
+  }, [selectedType]);
+
   // --- Wi-Fi Config Handlers ---
   const handleWifiConfigChange = (field: keyof WifiConfig, value: string) => {
     const updated = { ...wifiConfig, [field]: value };
@@ -149,16 +155,20 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
   const isWifiReady = serverOnline === 'online' && esp32Online === 'online';
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-brand-navy/95 backdrop-blur-xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-brand-navy/95 backdrop-blur-xl">
       <motion.div 
         initial={{ opacity: 0, y: 30, scale: 0.95 }} 
         animate={{ opacity: 1, y: 0, scale: 1 }} 
-        className="w-full max-w-lg glass-card p-10 flex flex-col items-center gap-8 relative overflow-hidden border border-white/10 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg glass-card flex flex-col relative overflow-hidden border border-white/10 max-h-[90vh]"
       >
         {/* Close Icon (Top Right) */}
-        <button onClick={onClose} className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors z-20">
-          <X size={24} />
+        <button onClick={onClose} className="absolute top-6 right-6 text-text-muted hover:text-white transition-colors z-30 bg-brand-navy/40 backdrop-blur-md p-2 rounded-full border border-white/10">
+          <X size={20} />
         </button>
+
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 scrollbar-thin scrollbar-thumb-brand-primary/20 hover:scrollbar-thumb-brand-primary/40">
+          <div className="flex flex-col items-center gap-8">
 
         {/* 1. Top Status Circle */}
         <div className="relative">
@@ -470,29 +480,34 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
           </div>
         )}
 
-        {/* Close Panel Button */}
-        <button 
-          onClick={onClose}
-          className="w-full py-5 text-text-muted hover:text-white font-bold uppercase tracking-[0.2em] text-[10px] transition-colors"
-        >
-          Close Panel
-        </button>
+        </div>
 
-        {/* Error Overlay */}
-        <AnimatePresence>
-          {(isError || wifiError) && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-2 text-center"
-            >
-              <span className="text-[10px] font-bold text-brand-danger uppercase tracking-widest bg-brand-danger/10 px-4 py-2 rounded-full border border-brand-danger/20 inline-block max-w-full">
-                {wifiError || errorMsg}
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Fixed Footer for Error and Close */}
+        <div className="p-6 border-t border-white/5 bg-brand-navy/30 backdrop-blur-md flex flex-col gap-4">
+          <AnimatePresence>
+            {((isError && !isWifiMode) || (wifiError && isWifiMode)) && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="text-center p-4 bg-brand-danger/10 border border-brand-danger/20 rounded-2xl">
+                  <p className="text-[10px] font-black text-brand-danger uppercase tracking-widest leading-relaxed">
+                    {isWifiMode ? wifiError : errorMsg}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button 
+            onClick={onClose}
+            className="w-full py-4 text-text-muted hover:text-white font-black uppercase tracking-[0.3em] text-[10px] transition-colors bg-white/5 hover:bg-white/10 rounded-xl"
+          >
+            Close Panel
+          </button>
+        </div>
       </motion.div>
     </div>
   );
