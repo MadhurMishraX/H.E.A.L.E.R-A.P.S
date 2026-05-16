@@ -480,6 +480,7 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
           </div>
         )}
 
+          </div>
         </div>
 
         {/* Fixed Footer for Error and Close */}
