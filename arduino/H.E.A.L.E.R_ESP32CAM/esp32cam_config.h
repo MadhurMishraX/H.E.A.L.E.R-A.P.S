@@ -24,15 +24,15 @@
 
 // ===== WI-FI SETTINGS =====
 // The name of your open Wi-Fi network (no password required)
-#define WIFI_SSID          "YOUR_NETWORK_NAME"
+#define WIFI_SSID          "5Gs A14"
 
 // Leave empty for open networks. Only set if your network has a password.
-#define WIFI_PASSWORD      ""
+#define WIFI_PASSWORD      "sharad123"
 
 // ===== SERVER SETTINGS =====
 // The IP address of the laptop/PC running the H.E.A.L.E.R backend server
 // Find this by running "ipconfig" (Windows) or "ifconfig" (Mac/Linux)
-#define SERVER_IP          "192.168.1.100"
+#define SERVER_IP          "2401:4900:a47b:b198:ffc7:3ea7:1938:b85b"
 
 // The port the backend server is running on (default: 3001)
 #define SERVER_PORT        3001

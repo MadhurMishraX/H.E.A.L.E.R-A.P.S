@@ -1,21 +1,23 @@
 /*
  * H.E.A.L.E.R - Arduino Mega Firmware
  * ------------------------------------
- * IMPORTANT: In Arduino IDE, go to Tools -> Board and select "Arduino Mega or Mega 2560".
- * REQUIRED LIBRARIES: Servo, SPI, MFRC522 (Install via Library Manager).
+ * IMPORTANT: In Arduino IDE, go to Tools -> Board and select "Arduino Mega or
+ * Mega 2560". REQUIRED LIBRARIES: Servo, SPI, MFRC522 (Install via Library
+ * Manager).
  */
 
-#include <Servo.h>
-#include <SPI.h>
 #include <MFRC522.h>
+#include <SPI.h>
+#include <Servo.h>
 #include <avr/wdt.h>
+
 
 // --- Configuration ---
 // Individual Angles for each servo [1, 2, 3, 4, FA]
-// If a door moves the WRONG way, just swap the OPEN and CLOSE numbers for that door!
-// [Door 1, Door 2, Door 3, Door 4, First Aid]
-const int OPEN_ANGLES[]  = {40, 40, 155, 155, 40}; //
-const int CLOSE_ANGLES[] = {155, 155, 40, 40, 155};
+// If a door moves the WRONG way, just swap the OPEN and CLOSE numbers for that
+// door! [Door 1, Door 2, Door 3, Door 4, First Aid]
+const int OPEN_ANGLES[] = {40, 40, 155, 155, 155}; //
+const int CLOSE_ANGLES[] = {155, 155, 40, 40, 40};
 
 const int BAUD_RATE = 9600;
 unsigned long lastRFIDCheck = 0;
@@ -44,7 +46,8 @@ void setup() {
   // 2. Initialize Servos (Pin Grounding for Smart Detach)
   for (int i = 0; i < 5; i++) {
     pinMode(SERVO_PINS[i], OUTPUT);
-    digitalWrite(SERVO_PINS[i], LOW); // Keep signal at 0V to prevent startup twitching
+    digitalWrite(SERVO_PINS[i],
+                 LOW); // Keep signal at 0V to prevent startup twitching
   }
   delay(1000); // Wait for power to stabilize
 
@@ -109,55 +112,74 @@ void handleChar(char inChar) {
  */
 void processCommand(String cmd) {
   cmd.trim();
+  if (cmd.length() == 0) return;
+
+  // --- LOOP PREVENTION ---
+  // Ignore messages that are not commands (replies from the other board)
+  if (cmd.startsWith("DEBUG") || cmd.startsWith("ACK") || cmd.startsWith("ERR") || cmd.startsWith("[")) {
+    return; 
+  }
+
   sendResponse("DEBUG_RECV: [" + cmd + "]");
-  
-  if (cmd == "OPEN_1") { openServo(0); }
-  else if (cmd == "OPEN_2") { openServo(1); }
-  else if (cmd == "OPEN_3") { openServo(2); }
-  else if (cmd == "OPEN_4") { openServo(3); }
-  else if (cmd == "OPEN_FA") { openFAServo(); }
-  
-  else if (cmd == "CLOSE_1") { closeServo(0); }
-  else if (cmd == "CLOSE_2") { closeServo(1); }
-  else if (cmd == "CLOSE_3") { closeServo(2); }
-  else if (cmd == "CLOSE_4") { closeServo(3); }
-  else if (cmd == "CLOSE_FA") { closeFAServo(); }
-  
+
+  if (cmd == "OPEN_1") {
+    openServo(0);
+  } else if (cmd == "OPEN_2") {
+    openServo(1);
+  } else if (cmd == "OPEN_3") {
+    openServo(2);
+  } else if (cmd == "OPEN_4") {
+    openServo(3);
+  } else if (cmd == "OPEN_FA") {
+    openFAServo();
+  }
+
+  else if (cmd == "CLOSE_1") {
+    closeServo(0);
+  } else if (cmd == "CLOSE_2") {
+    closeServo(1);
+  } else if (cmd == "CLOSE_3") {
+    closeServo(2);
+  } else if (cmd == "CLOSE_4") {
+    closeServo(3);
+  } else if (cmd == "CLOSE_FA") {
+    closeFAServo();
+  }
+
   else if (cmd == "CAM_ON") {
     digitalWrite(CAM_TRIGGER_PIN, HIGH);
     sendResponse("ACK_CAM_ON");
-  }
-  else if (cmd == "CAM_OFF") {
+  } else if (cmd == "CAM_OFF") {
     digitalWrite(CAM_TRIGGER_PIN, LOW);
     sendResponse("ACK_CAM_OFF");
   }
-  
+
   else if (cmd == "OPEN_ALL") {
     for (int i = 0; i < 5; i++) {
       servos[i].attach(SERVO_PINS[i]);
       servos[i].write(OPEN_ANGLES[i]);
-      delay(500); 
+      delay(500);
       servos[i].detach();
     }
     sendResponse("ACK_OPEN_ALL");
-  }
-  else if (cmd == "CLOSE_ALL") {
+  } else if (cmd == "CLOSE_ALL") {
     for (int i = 0; i < 5; i++) {
       servos[i].attach(SERVO_PINS[i]);
       servos[i].write(CLOSE_ANGLES[i]);
-      delay(500); 
+      delay(500);
       servos[i].detach();
     }
     sendResponse("ACK_CLOSE_ALL");
   }
-  
+
   else if (cmd == "REBOOT") {
     sendResponse("ACK_REBOOTING...");
     delay(100);
     wdt_enable(WDTO_15MS); // Suicide timer for reboot
-    while(1); // Wait for the dog to bite
+    while (1)
+      ; // Wait for the dog to bite
   }
-  
+
   else if (cmd.length() > 0) {
     sendResponse("ERR_UNKNOWN_CMD");
   }
@@ -172,18 +194,18 @@ void sendResponse(String msg) {
  * Control logic for single servo open
  */
 void openServo(int index) {
-  servos[index].attach(SERVO_PINS[index]); 
+  servos[index].attach(SERVO_PINS[index]);
   servos[index].write(OPEN_ANGLES[index]);
-  delay(400); 
-  servos[index].detach(); 
-  
+  delay(400);
+  servos[index].detach();
+
   // Send camera commands to ESP32-CAM via Serial1
   // TAKE_BEFORE: capture one image before the compartment is fully open
   Serial1.println("TAKE_BEFORE_" + String(index + 1));
   delay(100); // Brief gap so ESP32 can process
   // START_SESSION: begin continuous 1fps capture while compartment is open
   Serial1.println("START_SESSION_" + String(index + 1));
-  
+
   sendResponse("ACK_OPEN_" + String(index + 1));
   blinkLED(2, 200);
 }
@@ -192,15 +214,15 @@ void closeServo(int index) {
   // END_SESSION: stop continuous capture before closing
   Serial1.println("END_SESSION_" + String(index + 1));
   delay(100); // Brief gap so ESP32 can process
-  
+
   servos[index].attach(SERVO_PINS[index]);
   servos[index].write(CLOSE_ANGLES[index]);
-  delay(800); 
+  delay(800);
   servos[index].detach();
-  
+
   // TAKE_AFTER: capture one image after compartment has closed
   Serial1.println("TAKE_AFTER_" + String(index + 1));
-  
+
   sendResponse("ACK_CLOSE_" + String(index + 1));
   blinkLED(1, 200);
 }
@@ -214,7 +236,7 @@ void openFAServo() {
   delay(400);
   servos[4].detach();
   sendResponse("ACK_OPEN_FA");
-  blinkLED(2, 200); 
+  blinkLED(2, 200);
 }
 
 /**
@@ -234,9 +256,11 @@ void closeFAServo() {
  */
 void checkRFID() {
   // Look for new cards
-  if ( ! mfrc522.PICC_IsNewCardPresent()) return;
+  if (!mfrc522.PICC_IsNewCardPresent())
+    return;
   // Select one of the cards
-  if ( ! mfrc522.PICC_ReadCardSerial()) return;
+  if (!mfrc522.PICC_ReadCardSerial())
+    return;
 
   // Signal detection to both USB and App
   sendResponse("RFID_DETECTED");
@@ -255,6 +279,7 @@ void blinkLED(int count, int ms) {
     digitalWrite(LED_PIN, HIGH);
     delay(ms);
     digitalWrite(LED_PIN, LOW);
-    if (i < count - 1) delay(ms);
+    if (i < count - 1)
+      delay(ms);
   }
 }

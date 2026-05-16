@@ -353,7 +353,9 @@ void handleCapture() {
 
   // Return the JPEG image directly
   server.sendHeader("Content-Disposition", "inline; filename=capture.jpg");
-  server.send(200, "image/jpeg", (const char *)fb->buf, fb->len);
+  server.setContentLength(fb->len);
+  server.send(200, "image/jpeg", "");
+  server.sendContent((const char *)fb->buf, fb->len);
   esp_camera_fb_return(fb);
 }
 
@@ -413,6 +415,15 @@ void handleSerialInput() {
 // SERIAL COMMAND PROCESSOR
 // =========================================================================
 void processSerialCommand(String cmd) {
+  cmd.trim();
+  if (cmd.length() == 0) return;
+
+  // --- LOOP PREVENTION ---
+  // Ignore messages that are not commands (replies from the Mega)
+  if (cmd.startsWith("DEBUG") || cmd.startsWith("ACK") || cmd.startsWith("ERR") || cmd.startsWith("[")) {
+    return; 
+  }
+
   Serial.println("[CMD] Received: " + cmd);
 
   // --- TAKE_BEFORE_X ---
