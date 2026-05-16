@@ -13,6 +13,11 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { initHardware, sendCommand, onMessage, closeHardware } from '../utils/serialComm';
 import { dispense, addAdminLog } from '../services/dbService';
+import { 
+  loadWifiConfig, 
+  configureESP32Session, 
+  generateSessionName 
+} from '../utils/wifiService';
 
 export const DispensingScreen = () => {
   const { t, currentPatient, hwStatus, hwMode } = useAppContext();
@@ -59,6 +64,24 @@ export const DispensingScreen = () => {
 
       // Check if still mounted after async init
       if (timerRef.current === undefined) return; 
+
+      // 1.5. Configure ESP32-CAM Session (Wi-Fi)
+      // This is done before serial commands so the camera is ready with metadata
+      const wifiCfg = loadWifiConfig();
+      if (wifiCfg.serverUrl && wifiCfg.esp32Url && currentPatient) {
+        console.log("Configuring ESP32-CAM session via Wi-Fi...");
+        // Use a consistent session name for the folder structure
+        const sessionName = generateSessionName(); 
+        await configureESP32Session(
+          wifiCfg.serverUrl, 
+          wifiCfg.esp32Url, 
+          currentPatient.id!, 
+          sessionName
+        ).catch(err => {
+          console.warn("ESP32-CAM Wi-Fi config failed (optional):", err);
+          // We continue anyway as Serial is the primary trigger
+        });
+      }
 
       // 2. Register listener
       unlistenFn = onMessage((msg) => {
