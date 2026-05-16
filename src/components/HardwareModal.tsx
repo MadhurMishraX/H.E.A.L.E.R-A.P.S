@@ -154,6 +154,11 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
   const isWifiMode = selectedType === 'wifi';
   const isWifiReady = serverOnline === 'online' && esp32Online === 'online';
 
+  // Unify the "Ready" state for all modes
+  const isSystemReady = isConnected || (isWifiMode && isWifiReady);
+  const isSystemError = (isWifiMode ? !!wifiError : isError);
+  const isSystemLoading = isConnecting || (isWifiMode && wifiTesting);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-brand-navy/95 backdrop-blur-xl">
       <motion.div 
@@ -173,34 +178,32 @@ export const HardwareModal = ({ isOpen, onClose }: HardwareModalProps) => {
         {/* 1. Top Status Circle */}
         <div className="relative">
           <motion.div 
-            animate={isConnected || isWifiReady ? { scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] } : {}}
+            animate={isSystemReady ? { scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] } : {}}
             transition={{ repeat: Infinity, duration: 2 }}
             className={`absolute inset-[-12px] rounded-full ${
-              isConnected || isWifiReady ? 'bg-brand-success' : 
-              isError ? 'bg-brand-danger' : 
+              isSystemReady ? 'bg-brand-success' : 
+              isSystemError ? 'bg-brand-danger' : 
               'bg-brand-primary/20'
             }`}
           />
           <div className={`w-20 h-20 rounded-full flex items-center justify-center border-2 ${
-            isConnected || isWifiReady ? 'border-brand-success text-brand-success bg-brand-success/10' : 
-            isError ? 'border-brand-danger text-brand-danger bg-brand-danger/10' : 
+            isSystemReady ? 'border-brand-success text-brand-success bg-brand-success/10' : 
+            isSystemError ? 'border-brand-danger text-brand-danger bg-brand-danger/10' : 
             'border-white/10 text-white/50 bg-white/5'
           }`}>
-            {isConnected || isWifiReady ? <ShieldCheck size={40} /> : isError ? <AlertCircle size={40} /> : <Settings size={40} />}
+            {isSystemReady ? <ShieldCheck size={40} /> : isSystemError ? <AlertCircle size={40} /> : <Settings size={40} />}
           </div>
         </div>
 
         {/* 2. Main Title & Subtitle */}
         <div className="text-center">
           <h2 className="text-4xl font-black text-white mb-3 tracking-tight italic uppercase">
-            {isConnected ? 'Hardware Ready' : isWifiReady ? 'Wi-Fi Ready' : isError ? 'Hardware Offline' : 'Connect System'}
+            {isSystemReady ? 'Hardware Online' : isSystemError ? 'Hardware Offline' : isSystemLoading ? 'Connecting...' : 'Connect System'}
           </h2>
           <p className="text-text-secondary text-sm max-w-xs mx-auto font-medium leading-relaxed">
-            {isConnected 
-              ? `The application is successfully communicating with the H.E.A.L.E.R robot via ${activeType?.toUpperCase()}.`
-              : isWifiReady
-              ? 'ESP32-CAM and backend server are both online and ready for image capture.'
-              : isError 
+            {isSystemReady 
+              ? `The application is successfully communicating with the H.E.A.L.E.R robot via ${selectedType.toUpperCase()}.`
+              : isSystemError 
               ? 'The application could not detect the hardware. Please check your connection and try again.'
               : 'Choose your preferred communication link to start controlling the robot.'
             }
