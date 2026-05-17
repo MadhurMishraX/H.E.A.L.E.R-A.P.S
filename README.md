@@ -1,13 +1,13 @@
 # H.E.A.L.E.R - A.P.S 🏥🤖
 ### **H**ealth **E**mpowerment & **A**utomated **L**ogistics **E**mergency **R**esponse
-#### **Advanced Prescription System for Schools & Remote Communities**
+#### **Advanced Prescription & Diagnostic Kiosk for Remote Communities, Villages, & Public Spaces**
 
 ---
 
 ## 🌟 Vision & Overview
-**H.E.A.L.E.R - A.P.S** is a state-of-the-art, hardware-integrated medical kiosk designed specifically for the **Army Public School (APS)** ecosystem. It serves as a 24/7 automated first-responder station, providing clinical-grade symptom screening and immediate dispensing of basic medications.
+**H.E.A.L.E.R - A.P.S** is a state-of-the-art, hardware-integrated medical kiosk designed as a universal, 24/7 automated primary care station for **remote villages, underserved rural communities, schools, disaster relief zones, and public spaces**. It serves as an automated first-responder clinic, providing clinical-grade symptom screening and immediate dispensing of basic medications.
 
-Our mission is to bridge the gap between symptom onset and medical intervention, ensuring that students and staff have access to safe, audited, and automated healthcare without delay.
+Our mission is to bridge the gap between symptom onset and professional medical intervention, ensuring that citizens, families, and remote workers have access to safe, audited, and automated healthcare without delay.
 
 ---
 
@@ -15,7 +15,7 @@ Our mission is to bridge the gap between symptom onset and medical intervention,
 The core of H.E.A.L.E.R is a **Multi-Track Clinical Decision Support System (CDSS)**. Unlike simple chatbots, our engine follows strict medical branching logic modeled after standard triage protocols.
 
 ### 🛡️ Safety-First Philosophy
-- **Red-Flag Prioritization:** Before any diagnosis is made, the system checks for "Life-Threatening Signals" (e.g., chest pain, respiratory distress, high fever >104°F). If detected, the system immediately halts and initiates an **Emergency Doctor Referral**.
+- **Red-Flag Prioritization:** Before any diagnosis is made, the system checks for "Life-Threatening Signals" (e.g., chest pain, respiratory distress, high fever >104°F). If detected, the system immediately halts and initiates an **Emergency Medical Referral**.
 - **The 4-Track System:**
   1. **Flu & Fever:** Differentiates between Common Flu, Seasonal Viral Fever, and serious infections.
   2. **Headache:** Identifies triggers like stress, hunger, or potentially serious neurological indicators (Migraine vs. Tension).
@@ -39,18 +39,18 @@ The core of H.E.A.L.E.R is a **Multi-Track Clinical Decision Support System (CDS
 ### 🔌 Hardware Integration (IoT)
 - **Web Serial Control:** Driverless communication between the web interface and **Arduino Mega**.
 - **Precision Dispensing:** High-torque servo motors manage 4+ independent medicine compartments with zero-jam logic.
-- **RFID & QR Security:** Secure login via student ID cards or QR codes to prevent unauthorized access.
+- **RFID & QR Security:** Secure login via citizen health cards, patient ID cards, or custom QR codes to prevent unauthorized access.
 - **ESP32-CAM:** Visual confirmation of skin conditions and session recording for remote verification.
 
 ### 👥 User Experience
-- **Bi-lingual Support:** Complete localization in **English** and **Hindi**, making it accessible to all staff and students.
-- **Voice Feedback (Future Ready):** Designed for low-literacy accessibility.
-- **Digital Prescriptions:** Instant QR-code based prescriptions and automated email delivery to parents/guardians.
+- **Bi-lingual Support:** Complete localization in **English** and **Hindi**, making it accessible to local residents, remote populations, and children alike.
+- **Voice Feedback (Future Ready):** Designed for low-literacy accessibility in rural areas.
+- **Digital Prescriptions:** Instant QR-code based prescriptions and automated email delivery to patients or family guardians.
 
 ### 🛠️ Admin & Maintenance
 - **Live Inventory Tracking:** Real-time monitoring of medicine stock levels with low-stock alerts.
 - **Hardware Debugger:** A built-in terminal to test sensors, calibrate motors, and view raw serial logs.
-- **Session History:** Comprehensive logs of all diagnoses for school medical records.
+- **Session History:** Comprehensive logs of all diagnoses for community health tracking and medical records.
 
 ---
 
@@ -135,4 +135,4 @@ This project is licensed under the **MIT License**.
 **Disclaimer:** *H.E.A.L.E.R is a preliminary screening tool and does not replace professional medical advice. Always consult with a qualified doctor for serious conditions.*
 
 ---
-Developed for **Army Public School** | 2026 🇮🇳
+Developed as a Global Healthcare Initiative | 2026 🇮🇳

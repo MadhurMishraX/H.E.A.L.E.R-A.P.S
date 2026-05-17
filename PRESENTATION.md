@@ -1,51 +1,51 @@
 # H.E.A.L.E.R - A.P.S
 ## Complete Project Presentation Document
-### Prepared for: The Principal, Army Public School
+### Prepared for: Healthcare Administrators, Community Leaders, & Educators
 
 > [!NOTE]
-> Developed for Army Public School | 2026 | Team H.E.A.L.E.R
+> Developed for Remote Communities, Villages, & Public Health | 2026 | Team H.E.A.L.E.R
 
 ---
 
 ## 1. EXECUTIVE SUMMARY
 
-**H.E.A.L.E.R - A.P.S** (*Health Empowerment & Automated Logistics Emergency Response – Advanced Prescription System*) is a state-of-the-art, 24/7 automated medical kiosk engineered specifically for the **Army Public School** ecosystem. It serves as an intelligent first-responder station, providing clinical-grade symptom screening and automated medication dispensing.
+**H.E.A.L.E.R - A.P.S** (*Health Empowerment & Automated Logistics Emergency Response – Advanced Prescription System*) is a state-of-the-art, 24/7 automated medical kiosk engineered as a universal healthcare solution for **remote villages, underserved rural communities, schools, disaster relief camps, and public spaces**. It serves as an intelligent first-responder station, providing clinical-grade symptom screening and automated medication dispensing.
 
 ### 🎯 The Core Mission
-To bridge the critical gap between symptom onset and medical intervention, ensuring that every student and staff member has immediate access to safe, audited, and automated healthcare.
+To bridge the critical gap between symptom onset and professional medical intervention, ensuring that every citizen, resident, and community member has immediate access to safe, audited, and automated primary healthcare.
 
 ### 💡 The Problem It Solves
-It eliminates the dangerous delays associated with traditional school first-aid. Instead of waiting for permissions or parent arrivals, students receive an instant, logical diagnosis and immediate relief for minor ailments.
+It eliminates the dangerous delays associated with traditional first-aid and medical scarcity in remote areas. Instead of waiting hours for a doctor or travelling miles to a distant clinic, patients receive an instant, logical diagnosis and immediate relief for minor ailments.
 
 ### 👥 Who Benefits?
-*   **Students:** Instant relief from pain and discomfort, leading to better classroom focus.
-*   **Staff:** Reduced administrative burden of managing minor student illnesses.
-*   **Parents:** Peace of mind through instant digital prescriptions and real-time email notifications.
-*   **Management:** Complete transparency and automated records of all medical incidents.
+*   **Patients & Children:** Instant relief from pain and discomfort, reducing suffering and preventing minor ailments from worsening.
+*   **Community Workers & Teachers:** Reduced administrative and logistical burden of managing minor local illnesses.
+*   **Families & Guardians:** Peace of mind through instant digital prescriptions and real-time email notifications.
+*   **Administrators & Healthcare Officers:** Complete transparency, automated audits, and digital records of all medical incidents.
 
 ---
 
 ## 2. THE PROBLEM STATEMENT
 
-In a high-intensity educational environment like **Army Public School**, student health is paramount. However, current medical response systems face significant hurdles:
+In remote villages, public spaces, and underserved communities, access to timely primary healthcare is paramount. However, traditional medical response systems face significant hurdles:
 
 ### 🚩 Key Healthcare Challenges
-*   **Response Delays:** Navigating the bureaucracy of seeking permission and finding first-aid often takes upwards of 30 minutes—precious time during which a student suffers.
-*   **The "First-Aid Box" Gap:** Traditional kits are often poorly maintained, stocked with expired medicines, or locked away when needed most.
-*   **Lack of Expertise:** Teachers, while well-intentioned, are not trained to diagnose symptoms or determine exact pediatric dosages.
-*   **Communication Silos:** Parents are often the last to know when a child falls ill, and verbal messages are frequently misinterpreted.
+*   **Response Delays & Scarcity:** Seeking basic clinical guidance or finding first-aid in remote areas often takes hours due to geographical isolation.
+*   **The "First-Aid Box" Gap:** Traditional first-aid kits are often poorly maintained, stocked with expired medicines, or locked away when needed most.
+*   **Lack of Medical Expertise:** Local volunteers, while well-intentioned, are not trained to accurately diagnose symptoms or determine safe dosage margins.
+*   **Communication Silos:** Family members are often the last to know when a relative falls ill in a public or remote workplace, and verbal prescriptions are frequently misinterpreted.
 
-### 📉 Impact on Learning
-Statistical evidence shows that untreated minor conditions like **tension headaches** or **gastric distress** can reduce a student’s cognitive efficiency by nearly **40%**. Chronic delays in treatment lead to increased absenteeism and a decline in academic morale.
+### 📉 Impact on Life & Learning
+Statistical evidence shows that untreated minor conditions like **tension headaches** or **gastric distress** can reduce an individual's cognitive efficiency by nearly **40%**. Chronic delays in treatment lead to increased absenteeism in schools, lost productivity in agriculture or labor, and a decline in overall community health.
 
 ---
 
 ## 3. THE SOLUTION – WHAT IS H.E.A.L.E.R A.P.S?
 
-H.E.A.L.E.R - A.P.S is a "Medical Robot" designed to handle the complexities of school-level healthcare with zero human error.
+H.E.A.L.E.R - A.P.S is an autonomous "Medical Station" designed to handle the complexities of primary community-level healthcare with zero human error.
 
 ### 🛡️ The Advanced Prescription System
-Unlike a standard vending machine, H.E.A.L.E.R uses a **Clinical Decision Support System (CDSS)** to ensure that medicine is only given when it is safe and necessary.
+Unlike a standard vending machine, H.E.A.L.E.R uses a **Clinical Decision Support System (CDSS)** to ensure that medicine is only dispensed when it is safe and logically necessary.
 
 ### 💎 Key Unique Selling Points (USPs)
 
@@ -66,13 +66,13 @@ Unlike a standard vending machine, H.E.A.L.E.R uses a **Clinical Decision Suppor
 
 We have simplified the complex medical workflow into an intuitive **8-Step Journey**:
 
-1.  **Step 1: Arrival:** The student approaches the kiosk, which is located in a high-visibility, accessible area.
-2.  **Step 2: Secure Login:** The student authenticates using their **RFID ID Card** or a personal **QR Code**. This pulls their age and medical history into the system.
+1.  **Step 1: Arrival:** The patient approaches the kiosk, which is located in a high-visibility, central community area.
+2.  **Step 2: Secure Login:** The patient authenticates using their **RFID Health Card** or a personal **QR Code**. This pulls their age and medical history into the system.
 3.  **Step 3: Symptom Track Selection:** The user selects their primary concern (e.g., "I have a headache" or "My stomach hurts").
 4.  **Step 4: Dynamic Interview:** The AI-assisted engine asks a series of clinical questions (e.g., "Is the pain pulsing?", "Did you skip breakfast?").
 5.  **Step 5: Automated Diagnosis:** The system analyzes responses and provides a likely condition with a **Confidence Score** (70%–95%).
 6.  **Step 6: Smart Dispensing:** Internal high-torque motors dispense the *exact* required dose (Tablet, Syrup, or Drop) into the collection tray.
-7.  **Step 7: Parent Notification:** A digital prescription is instantly generated and emailed to the parent/guardian.
+7.  **Step 7: Family Notification:** A digital prescription is instantly generated and emailed to the patient or registered family guardian.
 8.  **Step 8: Admin Update:** The session is logged, and the medicine inventory is updated in the central database.
 
 ---
@@ -88,11 +88,11 @@ The "Brain" of H.E.A.L.E.R is a sophisticated logic engine that follows strict m
 *   **5.4 Skin & Allergy Track:** Screens for rashes and stings. It utilizes the **ESP32-CAM** for visual verification of the affected area.
 
 ### 🚨 The "Safety-First" Filter
-If a student reports symptoms of a **Life-Threatening Emergency** (e.g., chest pain, extreme breathlessness, or a fever above 104°F), the system:
+If a patient reports symptoms of a **Life-Threatening Emergency** (e.g., chest pain, extreme breathlessness, or a fever above 104°F), the system:
 1.  Immediately stops the session.
 2.  Triggers a loud visual "Emergency" alert.
-3.  Instructs the student to contact the medical officer immediately.
-4.  Logs a high-priority alert for the school admin.
+3.  Instructs the patient to contact a nearby medical officer or hospital immediately.
+4.  Logs a high-priority alert for the local health coordinator.
 
 ---
 
@@ -117,7 +117,7 @@ H.E.A.L.E.R - A.P.S maintains a strictly regulated inventory of WHO-approved, co
 | **Clotrimazole** | Fungal Infection | Apply Thinly | Apply Thinly | Ointment |
 
 ### ⚖️ Precision Dosage Logic
-The system calculates dosages based on the **Student Profile**. For example, if a 7-year-old and a 16-year-old both report a fever, the system will dispense different medications (e.g., Crocin 250 vs. Crocin 500) or different quantities, eliminating the risk of overdose.
+The system calculates dosages based on the **Patient Profile**. For example, if a 7-year-old and a 40-year-old both report a fever, the system will dispense different medications (e.g., Crocin 250 vs. Crocin 500) or different quantities, eliminating the risk of overdose.
 
 ---
 
@@ -131,20 +131,20 @@ The hardware architecture is designed for **industrial-grade reliability** and e
 |---|---|---|
 | **Arduino Mega** | Central Controller | Large memory and 50+ I/O pins for multiple motors/sensors. |
 | **Servo Motors** | Dispensing Control | High torque (MG996R) ensures zero-jam dispensing of tablets. |
-| **RFID Reader** | User Authentication | Fast, contactless, and integrates with existing school IDs. |
-| **QR Scanner** | Prescription Access | Allows students to "carry" their diagnosis on their phones. |
+| **RFID Reader** | User Authentication | Fast, contactless, and integrates with custom health ID cards. |
+| **QR Scanner** | Prescription Access | Allows patients to "carry" their diagnosis on their phones. |
 | **ESP32-CAM** | Visual Capture | Captures skin conditions for better diagnostic confidence. |
 | **SMPS Power Supply**| Stable Power | Ensures the system remains active even during voltage fluctuations. |
 | **Custom Compartments**| Medicine Storage | Acrylic-based, sterile, and gravity-fed for reliability. |
 
 ### 🔗 Connectivity: Web Serial API
-A major innovation in this project is the use of the **Web Serial API**. This allows the browser-based software to talk directly to the Arduino hardware *without* needing to install complex drivers or third-party software on the school computer.
+A major innovation in this project is the use of the **Web Serial API**. This allows the browser-based software to talk directly to the Arduino hardware *without* needing to install complex drivers or third-party software on the host computer.
 
 ---
 
 ## 8. SOFTWARE & TECHNOLOGY STACK
 
-The software is built using a modern "Offline-First" architecture, ensuring it works even if the school internet is unstable.
+The software is built using a modern "Offline-First" architecture, ensuring it works even if community internet is unstable.
 
 ### 💻 Technology Layers
 
@@ -153,7 +153,7 @@ The software is built using a modern "Offline-First" architecture, ensuring it w
 | **Frontend** | **React 19 & Vite** | Blazing-fast user interface with modern component logic. |
 | **Language** | **TypeScript** | Ensures "Type-Safety"—eliminating bugs in the diagnostic logic. |
 | **Design/CSS** | **Tailwind CSS 4.0** | Professional, clean, and responsive design for all screen sizes. |
-| **Animations** | **Framer Motion** | Provides smooth, calming transitions for sick students. |
+| **Animations** | **Framer Motion** | Provides smooth, calming transitions for patients. |
 | **Database** | **Dexie.js / IndexedDB** | Stores logs locally; works 100% offline. |
 | **Hardware Link** | **Web Serial API** | Direct browser-to-hardware communication. |
 | **Mobile Bridge** | **Capacitor** | Allows the same code to run as an Android/iOS app. |
@@ -165,71 +165,71 @@ The software is built using a modern "Offline-First" architecture, ensuring it w
 
 Security in H.E.A.L.E.R is multi-layered to prevent unauthorized access and medication misuse.
 
-*   **Multi-Factor Identification:** Access is granted only via **RFID cards** issued by the school. This ensures that only registered students can use the system.
-*   **Rate Limiting:** A student cannot request the same medicine twice within a 4-hour window, preventing potential overdose or "stockpiling."
-*   **Admin Override:** The school medical officer has a "Master Key" to unlock the machine or override the diagnostic logic in person.
+*   **Multi-Factor Identification:** Access is granted only via **RFID cards** issued by the clinic or school. This ensures that only registered members can use the system.
+*   **Rate Limiting:** A patient cannot request the same medicine twice within a 4-hour window, preventing potential overdose or "stockpiling."
+*   **Admin Override:** The community medical officer has a "Master Key" to unlock the machine or override the diagnostic logic in person.
 *   **Encrypted Logs:** All patient data is stored using browser-based encryption (IndexedDB) and only synced to the admin panel via secure channels.
 *   **Audit Trail:** Every motor movement is logged. If a medicine is dispensed, there is a corresponding diagnostic session ID linked to it.
 
 ---
 
-## 10. ADMIN PANEL – FOR SCHOOL MANAGEMENT
+## 10. ADMIN PANEL – FOR COMMUNITY & SCHOOL MANAGEMENT
 
-The Admin Panel is a powerful dashboard designed for the School Principal and Medical Officer.
+The Admin Panel is a powerful dashboard designed for local healthcare administrators and medical officers.
 
-### 📊 Features for the School Management
+### 📊 Features for Management
 1.  **Live Inventory Dashboard:** A real-time view of how many tablets or bottles are left. The system highlights low-stock items in RED.
-2.  **Session History:** A searchable database of every student who used the kiosk, their symptoms, and the dispensed medicine.
+2.  **Session History:** A searchable database of every patient who used the kiosk, their symptoms, and the dispensed medicine.
 3.  **Hardware Health Monitor:** A built-in terminal that shows the status of the Arduino, Motors, and Sensors. It allows for "One-Click Calibration" of the dispensing arms.
-4.  **Health Trends Analytics:** Visual charts showing if fever cases are rising in a particular month, allowing the school to take proactive hygiene measures.
-5.  **User Management:** The ability to add/remove RFID cards and update student medical profiles (e.g., adding an allergy to Penicillin).
+4.  **Health Trends Analytics:** Visual charts showing if cases of specific conditions are rising in a particular month, allowing the community to take proactive hygiene or sanitization measures.
+5.  **User Management:** The ability to add/remove RFID cards and update patient medical profiles (e.g., adding an allergy to Penicillin).
 
 ---
 
-## 11. PARENT & GUARDIAN FEATURES
+## 11. PARENT, FAMILY, & GUARDIAN FEATURES
 
-A core objective of H.E.A.L.E.R - A.P.S is to eliminate the anxiety parents feel when their child falls ill at school. We have built an ecosystem that keeps parents in the loop at every step.
+A core objective of H.E.A.L.E.R - A.P.S is to eliminate the anxiety families feel when their relative falls ill in a remote location. We have built an ecosystem that keeps guardians in the loop at every step.
 
 ### 📧 Automated Email Notifications
-The moment a medicine is dispensed, our system triggers a **Real-Time Email Alert** to the registered parent's email ID. This email includes:
-*   **Timestamp:** The exact time the student accessed the kiosk.
-*   **Symptoms Reported:** A summary of what the child told the system.
+The moment a medicine is dispensed, our system triggers a **Real-Time Email Alert** to the registered family email ID. This email includes:
+*   **Timestamp:** The exact time the patient accessed the kiosk.
+*   **Symptoms Reported:** A summary of what the patient told the system.
 *   **Diagnosis:** The clinical outcome determined by the logic engine.
 *   **Medicine Details:** Name of the medicine and the exact dose dispensed.
 *   **Post-Care Instructions:** E.g., "Drink plenty of water" or "Avoid heavy food for 4 hours."
 
 ### 📜 Digital QR-Code Prescription
-For parents who do not use email frequently, the kiosk displays a **Session QR Code**. A student can scan this with their phone (or a teacher can scan it) to save a permanent digital record of the visit. This QR code leads to a secure web link containing the full prescription details, which can be shown to a family doctor later if needed.
+For patients in remote villages who do not use email frequently, the kiosk displays a **Session QR Code**. A patient or caregiver can scan this with their phone to save a permanent digital record of the visit. This QR code leads to a secure web link containing the full prescription details, which can be shown to a community doctor later if needed.
 
 ---
 
 ## 12. LANGUAGE & ACCESSIBILITY
 
-At **Army Public School**, we cater to students from diverse backgrounds across India. Accessibility is not a feature; it is a fundamental requirement.
+Across diverse communities, villages, and schools in India, we cater to patients from varied linguistic backgrounds. Accessibility is not a feature; it is a fundamental requirement.
 
 ### 🇮🇳 Bilingual Support: English & Hindi
 The entire interface—from the welcome screen to the complex diagnostic questions—is available in both **English and Hindi**.
-*   **Why it matters:** In moments of pain or distress, students find it easier to express symptoms in their native tongue. Bilingual support ensures that no student is denied care due to a language barrier.
+*   **Why it matters:** In moments of pain or distress, patients find it easier to express symptoms in their native tongue. Bilingual support ensures that no citizen is denied care due to a language barrier.
 *   **Seamless Switching:** A single toggle button allows the user to switch languages at any point during the session without losing their progress.
 
 ### ♿ Design for All Age Groups
-The UI uses high-contrast colors, large touch-targets, and **Lucide-React** iconography to guide students who may be too young to read complex medical terms.
-*   **Future Scope:** We are currently developing a **Voice Feedback System** to assist visually impaired students or those with low literacy levels.
+The UI uses high-contrast colors, large touch-targets, and **Lucide-React** iconography to guide patients who may be too young or unable to read complex medical terms.
+*   **Future Scope:** We are currently developing a **Voice Feedback System** to assist visually impaired patients or those with low literacy levels in remote villages.
 
 ---
 
 ## 13. SAFETY PROTOCOLS & ETHICAL CONSIDERATIONS
 
-When dealing with student health, ethical responsibility is our highest priority. H.E.A.L.E.R is built on a "Safe-Fail" philosophy.
+When dealing with public health, ethical responsibility is our highest priority. H.E.A.L.E.R is built on a "Safe-Fail" philosophy.
 
 ### 🚫 The Doctor-Replacement Disclaimer
 H.E.A.L.E.R - A.P.S is a **Screening and First-Aid Tool**, not a replacement for a qualified physician. Every session starts and ends with a clear disclaimer stating that professional medical advice should always be sought for persistent or worsening symptoms.
 
 ### 📋 Ethical Use of AI
 While we use advanced logic, we follow strict **Medical Ethics**:
-1.  **No Over-Prescribing:** The system will never dispense "strong" medicines like antibiotics or high-potency painkillers. It is restricted to WHO-listed basic first-aid meds.
-2.  **Privacy by Design:** Student health data is stored locally and is only accessible to authorized school medical staff. It is not sold or shared with third-party advertisers.
-3.  **Human-in-the-loop:** The school medical officer has the ultimate authority to audit and override any system decision.
+1.  **No Over-Prescribing:** The system will never dispense "strong" medicines like antibiotics or high-potency painkillers. It is restricted to WHO-listed basic first-aid medications.
+2.  **Privacy by Design:** Patient health data is stored locally and is only accessible to authorized medical staff. It is not shared with third-party advertisers.
+3.  **Human-in-the-loop:** The local medical officer has the ultimate authority to audit and override any system decision.
 
 ---
 
@@ -256,13 +256,13 @@ The journey of H.E.A.L.E.R - A.P.S from a concept to a functional kiosk:
 
 | Phase | Tasks Completed | Status |
 |---|---|---|
-| **Phase 1: Research** | Analysis of school medical needs & WHO medicine lists. | **Completed** ✅ |
+| **Phase 1: Research** | Analysis of community medical needs & WHO medicine lists. | **Completed** ✅ |
 | **Phase 2: Logic Design**| Development of the 4-track Diagnostic Engine (CDSS). | **Completed** ✅ |
 | **Phase 3: Hardware** | Arduino Mega integration and Servo motor calibration. | **Completed** ✅ |
 | **Phase 4: Integration** | Web Serial API bridge and Database setup. | **Completed** ✅ |
 | **Phase 5: Bug Audit** | 48-hour stress test and logical edge-case fixes. | **Completed** ✅ |
 | **Phase 6: Final Build** | Full physical assembly and bilingual localization. | **Completed** ✅ |
-| **Phase 7: Deployment** | Ready for pilot testing at Army Public School. | **Awaiting Approval** 🚀 |
+| **Phase 7: Deployment** | Ready for pilot testing in remote villages and community clinics. | **Ready for Pilot** 🚀 |
 
 ---
 
@@ -274,8 +274,8 @@ The development of H.E.A.L.E.R - A.P.S was not without its hurdles. Below are th
 |---|---|---|
 | **Driverless Hardware**| Browser security prevents direct hardware access. | Implemented the **Web Serial API** for direct browser-to-Arduino comms. |
 | **Zero-Jam Logic** | Medicine tablets vary in size and can get stuck. | Designed a **High-Torque Servo** system with gravity-fed vibration logic. |
-| **Age-Specific Dosing** | A "one size fits all" dose is dangerous for children. | Created a **Dosage Engine** that cross-references user age with WHO rules. |
-| **Offline Operation** | Schools often have intermittent internet issues. | Built an **IndexedDB** system that saves all data locally until sync is possible. |
+| **Age-Specific Dosing** | A "one size fits all" dose is dangerous for children. | Created a **Dosage Engine** that cross-references patient age with WHO rules. |
+| **Offline Operation** | Remote communities often have intermittent internet issues. | Built an **IndexedDB** system that saves all data locally until sync is possible. |
 | **Bilingual UI** | Hindi translation often breaks standard UI layouts. | Used **Tailwind CSS Flexbox** to create a responsive, language-agnostic design. |
 | **Red-Flag Detection** | Logic might miss serious symptoms in complex paths. | Conducted a **Rigorous Bug Audit (May 2026)** to harden all emergency paths. |
 
@@ -283,28 +283,28 @@ The development of H.E.A.L.E.R - A.P.S was not without its hurdles. Below are th
 
 ## 17. IMPACT & BENEFITS
 
-H.E.A.L.E.R - A.P.S creates a ripple effect of efficiency and safety across the entire school ecosystem.
+H.E.A.L.E.R - A.P.S creates a ripple effect of efficiency and safety across the entire healthcare ecosystem.
 
-### 🏫 For Students:
+### 🏫 For Patients & Residents:
 *   **Immediate Relief:** Reduces the time spent in pain from ~30 minutes to **under 2 minutes**.
-*   **Health Literacy:** Students learn to identify and describe their symptoms accurately.
+*   **Health Literacy:** Local residents learn to identify and describe their symptoms accurately.
 *   **Dignity in Care:** Provides a private, judgment-free space to seek help for minor issues.
 
-### 👩‍🏫 For Teachers & Staff:
-*   **Zero Distraction:** Teachers can focus on the syllabus without being interrupted by minor medical requests.
-*   **Liability Reduction:** Since the kiosk follows clinical logic, teachers are no longer responsible for "guessing" dosages.
+### 👩‍🏫 For Community Workers & Volunteers:
+*   **Zero Distraction:** Local workers can focus on critical duties without being interrupted by minor first-aid requests.
+*   **Liability Reduction:** Since the kiosk follows clinical logic, volunteers are no longer responsible for "guessing" dosages.
 
-### 👪 For Parents:
-*   **Transparency:** Parents are no longer "in the dark." They know exactly what happened and what was given.
-*   **Professionalism:** Receiving a digital prescription via email builds trust in the school’s management.
+### 👪 For Families & Guardians:
+*   **Transparency:** Families are no longer "in the dark." They know exactly what happened and what was given.
+*   **Professionalism:** Receiving a digital prescription via email builds trust in the community's healthcare infrastructure.
 
-### 💼 For School Administration:
+### 💼 For Local Government & Administrators:
 *   **Automated Audits:** No more manual stock-taking. The admin knows exactly when a strip of medicine needs replacement.
-*   **Data-Driven Decisions:** If the admin sees a spike in "Headache" logs, they can investigate if it's due to classroom lighting or heat.
+*   **Data-Driven Decisions:** If the admin sees a spike in "Headache" logs, they can investigate if it's due to regional hydration or heatwaves.
 
-### 🇮🇳 For the Nation (APS Context):
-*   **Technological Leadership:** Positioning Army Public School as a pioneer in adopting **Make-In-India** medical IoT solutions.
-*   **Scalability:** A model that can be deployed across all APS branches, creating a national school-health network.
+### 🇮🇳 For the Nation (Broad IoT Context):
+*   **Rural Healthcare Leadership:** Positioning remote rural healthcare as a pioneer in adopting **Make-In-India** medical IoT solutions.
+*   **Scalability:** A model that can be deployed across remote villages, schools, and health centers, creating a national health network.
 
 ---
 
@@ -314,42 +314,42 @@ We view this version of H.E.A.L.E.R as just the beginning.
 
 | Feature | Description | Timeline |
 |---|---|---|
-| **Voice Feedback** | Multilingual voice instructions for younger children. | Q3 2026 |
+| **Voice Feedback** | Multilingual voice instructions for rural populations. | Q3 2026 |
 | **AI Skin Diagnosis** | Using **Google Gemini** for high-accuracy skin rash analysis. | Q4 2026 |
 | **Biometric Login** | Fingerprint/Face ID for even faster authentication. | Q1 2027 |
-| **Telemedicine Link** | One-touch button to video-call the school doctor. | Q2 2027 |
-| **Multi-Kiosk Sync** | Centralized dashboard for the entire APS Region. | Q3 2027 |
+| **Telemedicine Link** | One-touch button to video-call a remote doctor. | Q2 2027 |
+| **Multi-Kiosk Sync** | Centralized dashboard for the entire district or region. | Q3 2027 |
 
 ---
 
-## 19. FREQUENTLY ASKED QUESTIONS (FAQ) – PRINCIPAL EDITION
+## 19. FREQUENTLY ASKED QUESTIONS (FAQ) – ADMINISTRATOR EDITION
 
 **Q1: Is this safe for children? What if the machine gives the wrong medicine?**
 *Answer:* Safety is our priority. The logic engine uses a "Conservative Bias"—if a symptom is ambiguous, it will NOT dispense medicine. Furthermore, we only stock basic first-aid medications with high safety margins.
 
 **Q2: Who is responsible if something goes wrong medically?**
-*Answer:* H.E.A.L.E.R is a first-aid tool. Legally, it falls under the same category as a first-aid box, but with the added benefit of clinical logic and an audit trail. A disclaimer is signed (digitally) by the student/parent during registration.
+*Answer:* H.E.A.L.E.R is a first-aid tool. Legally, it falls under the same category as a first-aid box, but with the added benefit of clinical logic and an audit trail. A disclaimer is signed (digitally) by the patient/guardian during registration.
 
-**Q3: Can this replace our school nurse or medical staff?**
-*Answer:* No. It is an **Assistant**, not a replacement. It handles 80% of minor cases, allowing the nurse to focus on the 20% of serious medical emergencies.
+**Q3: Can this replace our nurse or medical staff?**
+*Answer:* No. It is an **Assistant**, not a replacement. It handles 80% of minor cases, allowing the nurse or remote doctor to focus on the 20% of serious medical emergencies.
 
 **Q4: What happens if the internet goes down?**
 *Answer:* The system is "Offline-First." It will continue to diagnose and dispense using the local database. Emails will be queued and sent once the connection is restored.
 
-**Q5: How do we keep students from misusing the machine?**
-*Answer:* Access is locked behind RFID cards. The system also has **Rate-Limiting**, meaning a student cannot get medicine multiple times a day without an admin override.
+**Q5: How do we keep users from misusing the machine?**
+*Answer:* Access is locked behind RFID health cards. The system also has **Rate-Limiting**, meaning a user cannot get medicine multiple times a day without an admin override.
 
-**Q6: How much would this cost to deploy in multiple schools?**
+**Q6: How much would this cost to deploy in multiple communities?**
 *Answer:* Because we use open-source hardware (Arduino) and software (React), the cost is a fraction of commercial medical grade kiosks. Each unit is highly cost-effective to build and maintain.
 
 **Q7: Has this been tested? Is the diagnosis logic verified?**
 *Answer:* Yes. The logic was stress-tested during our May 2026 Audit. We simulated over 500 medical scenarios to ensure the engine never overrides a red-flag symptom.
 
-**Q8: Can parents opt out of having their child use this?**
-*Answer:* Absolutely. The admin panel allows the school to "Deactivate" the RFID cards of students whose parents prefer traditional care.
+**Q8: Can families opt out of having their members use this?**
+*Answer:* Absolutely. The admin panel allows the coordinator to "Deactivate" the RFID health cards of users who prefer traditional care.
 
-**Q9: What medicines are stored and are they safe for all children?**
-*Answer:* We store WHO-essential medicines like Paracetamol and ORS. The system checks for "Known Allergies" in the student profile before dispensing.
+**Q9: What medicines are stored and are they safe for all?**
+*Answer:* We store WHO-essential medicines like Paracetamol and ORS. The system checks for "Known Allergies" in the user profile before dispensing.
 
 **Q10: What is the maintenance requirement for this machine?**
 *Answer:* Minimal. It requires a weekly stock check (which takes 5 minutes via the Admin Dashboard) and a monthly sensor calibration.
@@ -358,14 +358,12 @@ We view this version of H.E.A.L.E.R as just the beginning.
 
 ## 20. CONCLUSION
 
-**H.E.A.L.E.R - A.P.S** is more than just a project; it is a vision of a healthier, smarter, and safer school environment. By combining the precision of robotics with the empathy of healthcare logic, we have created a system that ensures no student has to suffer in silence.
+**H.E.A.L.E.R - A.P.S** is more than just a project; it is a vision of a healthier, smarter, and safer environment. By combining the precision of robotics with the empathy of healthcare logic, we have created a system that ensures no community member has to suffer in silence.
 
-We believe that **"Healthy Students are Better Learners."** This kiosk is our contribution to making Army Public School a leader in student-centric innovation.
+We believe that **"Healthy Citizens build Prosperous Communities."** This kiosk is our contribution to making digital primary care a leader in citizen-centric innovation.
 
 ### **Project Tagline:**
-> *"H.E.A.L.E.R A.P.S: Smarter Care, Faster Relief, Better Learning."*
+> *"H.E.A.L.E.R A.P.S: Smarter Care, Faster Relief, Empowered Communities."*
 
 ---
 **[End of Document]**
-
-
