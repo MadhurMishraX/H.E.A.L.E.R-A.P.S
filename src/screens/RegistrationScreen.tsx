@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { ArrowLeft, User, Mail, Calendar, Check, Mail as MailIcon, ArrowRight } from 'lucide-react';
+import { ArrowLeft, User, Mail, Calendar, Check, Mail as MailIcon, ArrowRight, KeyRound } from 'lucide-react';
 import QRCode from 'qrcode';
 import { QRCodeDisplay } from '../utils/qrUtils';
 import { sendQRCodeEmail } from '../services/emailService';
@@ -37,10 +37,38 @@ export const RegistrationScreen = () => {
     fetchSettings();
   }, []);
 
+  // ── Live field validators ──────────────────────────────────────────────
+  const validateField = (field: string, value: string, allData = formData) => {
+    let error = '';
+    switch (field) {
+      case 'name':
+        if (!value) error = t('registration.fieldRequired');
+        break;
+      case 'age': {
+        const n = parseInt(value);
+        if (!value) error = t('registration.fieldRequired');
+        else if (isNaN(n) || n < 1 || n > 120) error = t('registration.ageError');
+        break;
+      }
+      case 'email':
+        if (!value) error = t('registration.fieldRequired');
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = t('registration.emailError');
+        break;
+      case 'password':
+        if (!value) error = t('registration.fieldRequired');
+        else if (value.length < 4) error = t('registration.passwordError');
+        break;
+      case 'confirmPassword':
+        if (value !== allData.password) error = t('registration.passwordMismatch');
+        break;
+    }
+    setErrors(prev => ({ ...prev, [field]: error }));
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name) newErrors.name = t('registration.fieldRequired');
-    
+
     const ageNum = parseInt(formData.age);
     if (!formData.age) {
       newErrors.age = t('registration.fieldRequired');
@@ -49,7 +77,7 @@ export const RegistrationScreen = () => {
     }
 
     if (!formData.gender) newErrors.gender = t('registration.fieldRequired');
-    
+
     if (!formData.email) {
       newErrors.email = t('registration.fieldRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -149,7 +177,7 @@ export const RegistrationScreen = () => {
                 <input 
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => { const v = e.target.value; setFormData(p => ({...p, name: v})); validateField('name', v); }}
                   className={`h-16 px-6 text-xl bg-brand-navy rounded-xl border border-white/10 text-white placeholder-text-muted transition-all focus:outline-none focus:border-brand-secondary focus:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
                     errors.name ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : ''
                   }`}
@@ -166,7 +194,7 @@ export const RegistrationScreen = () => {
                 <input 
                   type="number"
                   value={formData.age}
-                  onChange={(e) => setFormData({...formData, age: e.target.value})}
+                  onChange={(e) => { const v = e.target.value; setFormData(p => ({...p, age: v})); validateField('age', v); }}
                   className={`h-16 px-6 text-xl bg-brand-navy rounded-xl border border-white/10 text-white placeholder-text-muted transition-all focus:outline-none focus:border-brand-secondary focus:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
                     errors.age ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : ''
                   }`}
@@ -202,27 +230,38 @@ export const RegistrationScreen = () => {
                   <Mail size={18} />
                   {t('registration.email')}
                 </label>
-                <input 
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className={`h-16 px-6 text-xl bg-brand-navy rounded-xl border border-white/10 text-white placeholder-text-muted transition-all focus:outline-none focus:border-brand-secondary focus:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
-                    errors.email ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : ''
-                  }`}
-                />
+                <div className={`flex h-16 bg-brand-navy rounded-xl border overflow-hidden transition-all focus-within:border-brand-secondary focus-within:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
+                  errors.email ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : 'border-white/10'
+                }`}>
+                  <input
+                    type="text"
+                    placeholder="username"
+                    value={formData.email.includes('@') ? formData.email.split('@')[0] : formData.email}
+                    onChange={(e) => {
+                      const username = e.target.value.replace(/@.*/, '');
+                      const full = username ? `${username}@gmail.com` : '';
+                      setFormData(p => ({ ...p, email: full }));
+                      validateField('email', full);
+                    }}
+                    className="flex-1 h-full px-6 text-xl bg-transparent text-white placeholder-text-muted focus:outline-none"
+                  />
+                  <div className="flex items-center pr-5 text-brand-secondary font-bold text-lg select-none pointer-events-none whitespace-nowrap">
+                    @gmail.com
+                  </div>
+                </div>
                 {errors.email && <span className="absolute -bottom-6 left-2 text-brand-danger text-sm font-bold">{errors.email}</span>}
               </div>
 
               {/* Password */}
               <div className="flex flex-col gap-3 group relative">
                 <label className="text-sm font-bold text-text-secondary flex items-center gap-2 uppercase tracking-widest transition-colors group-focus-within:text-brand-secondary">
-                  <User size={18} />
+                  <KeyRound size={18} />
                   {t('registration.password')}
                 </label>
                 <input 
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => { const v = e.target.value; const updated = {...formData, password: v}; setFormData(updated); validateField('password', v); if (formData.confirmPassword) validateField('confirmPassword', formData.confirmPassword, updated); }}
                   className={`h-16 px-6 text-xl bg-brand-navy rounded-xl border border-white/10 text-white placeholder-text-muted transition-all focus:outline-none focus:border-brand-secondary focus:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
                     errors.password ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : ''
                   }`}
@@ -239,7 +278,7 @@ export const RegistrationScreen = () => {
                 <input 
                   type="password"
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                  onChange={(e) => { const v = e.target.value; setFormData(p => ({...p, confirmPassword: v})); validateField('confirmPassword', v, {...formData, confirmPassword: v}); }}
                   className={`h-16 px-6 text-xl bg-brand-navy rounded-xl border border-white/10 text-white placeholder-text-muted transition-all focus:outline-none focus:border-brand-secondary focus:shadow-[0_0_15px_rgba(0,188,212,0.2)] ${
                     errors.confirmPassword ? 'border-brand-danger shadow-[0_0_15px_rgba(255,82,82,0.2)]' : ''
                   }`}

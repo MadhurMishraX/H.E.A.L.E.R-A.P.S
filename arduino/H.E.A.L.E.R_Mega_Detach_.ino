@@ -17,8 +17,8 @@
 // Individual Angles for each servo [1, 2, 3, 4, FA]
 // If a door moves the WRONG way, just swap the OPEN and CLOSE numbers for that door!
 // [Door 1, Door 2, Door 3, Door 4, First Aid]
-const int OPEN_ANGLES[]  = {40, 40, 155, 155, 40}; //
-const int CLOSE_ANGLES[] = {155, 155, 40, 40, 155};
+const int OPEN_ANGLES[]  = {34, 35, 35, 42, 155};
+const int CLOSE_ANGLES[] = {153, 150, 152, 157, 40};
 
 const int BAUD_RATE = 9600;
 unsigned long lastRFIDCheck = 0;
