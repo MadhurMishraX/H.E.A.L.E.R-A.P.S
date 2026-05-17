@@ -24,6 +24,7 @@ export const RegistrationScreen = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isCustomEmail, setIsCustomEmail] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [registeredPatient, setRegisteredPatient] = useState<any>(null);
   const [clinicName, setClinicName] = useState('');
@@ -235,19 +236,40 @@ export const RegistrationScreen = () => {
                 }`}>
                   <input
                     type="text"
-                    placeholder="username"
-                    value={formData.email.includes('@') ? formData.email.split('@')[0] : formData.email}
+                    placeholder={isCustomEmail ? "email@example.com" : "username"}
+                    value={isCustomEmail ? formData.email : (formData.email.includes('@') ? formData.email.split('@')[0] : formData.email)}
                     onChange={(e) => {
-                      const username = e.target.value.replace(/@.*/, '');
-                      const full = username ? `${username}@gmail.com` : '';
-                      setFormData(p => ({ ...p, email: full }));
-                      validateField('email', full);
+                      const val = e.target.value;
+                      if (isCustomEmail) {
+                        if (!val.includes('@')) {
+                          setIsCustomEmail(false);
+                          const full = val ? `${val}@gmail.com` : '';
+                          setFormData(p => ({ ...p, email: full }));
+                          validateField('email', full);
+                        } else {
+                          setFormData(p => ({ ...p, email: val }));
+                          validateField('email', val);
+                        }
+                      } else {
+                        if (val.includes('@')) {
+                          setIsCustomEmail(true);
+                          setFormData(p => ({ ...p, email: val }));
+                          validateField('email', val);
+                        } else {
+                          const username = val.replace(/@.*/, '');
+                          const full = username ? `${username}@gmail.com` : '';
+                          setFormData(p => ({ ...p, email: full }));
+                          validateField('email', full);
+                        }
+                      }
                     }}
                     className="flex-1 h-full px-6 text-xl bg-transparent text-white placeholder-text-muted focus:outline-none"
                   />
-                  <div className="flex items-center pr-5 text-brand-secondary font-bold text-lg select-none pointer-events-none whitespace-nowrap">
-                    @gmail.com
-                  </div>
+                  {!isCustomEmail && (
+                    <div className="flex items-center pr-5 text-brand-secondary font-bold text-lg select-none pointer-events-none whitespace-nowrap">
+                      @gmail.com
+                    </div>
+                  )}
                 </div>
                 {errors.email && <span className="absolute -bottom-6 left-2 text-brand-danger text-sm font-bold">{errors.email}</span>}
               </div>
