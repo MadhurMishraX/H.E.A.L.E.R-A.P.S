@@ -31,7 +31,13 @@ export const FullScreenButton = () => {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={toggleFullscreen}
-      className="fixed top-4 left-4 z-[9999] p-3 glass-card rounded-full text-brand-secondary shadow-lg hover:shadow-brand-secondary/30 transition-all duration-300 flex items-center justify-center group"
+
+      // className="fixed top-4 left-4 z-[9999] p-3 glass-card rounded-full text-brand-secondary shadow-lg hover:shadow-brand-secondary/30 transition-all duration-300 flex items-center justify-center group"
+      className={`fixed top-4 left-4 z-[9999] p-3 rounded-full text-brand-secondary transition-all duration-300 flex items-center justify-center group ${isFullscreen
+        ? 'bg-transparent shadow-none hover:bg-white/5'
+        : 'glass-card shadow-lg hover:shadow-brand-secondary/30'
+        }`}
+
       title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
       aria-label="Toggle Fullscreen"
     >
