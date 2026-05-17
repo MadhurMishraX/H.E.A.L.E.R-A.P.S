@@ -13,6 +13,7 @@ import {
 } from './screens';
 import { Loader2 } from 'lucide-react';
 import { FullScreenButton } from './components/FullScreenButton';
+import { HelpAssistant } from './components/HelpAssistant';
 
 const MainLayout = () => {
   const { setCurrentPatient, setCurrentSession } = useAppContext();
@@ -41,6 +42,7 @@ const MainLayout = () => {
   return (
     <div className="w-screen h-screen overflow-auto bg-white text-gray-900 select-none font-sans relative">
       <FullScreenButton />
+      <HelpAssistant />
       <Routes>
         <Route path="/" element={<LandingScreen />} />
         <Route path="/registration" element={<RegistrationScreen />} />
